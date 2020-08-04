@@ -39,8 +39,8 @@ public class RsController {
     rsList.add(rsEvent);
   }
 
-  @PatchMapping("/rs/event")
-  private void updateRsEvent(@RequestParam Integer index, @RequestBody RsEvent rsEvent) {
+  @PatchMapping("/rs/{index}")
+  private void updateRsEvent(@PathVariable Integer index, @RequestBody RsEvent rsEvent) {
     RsEvent newRsEvent = rsList.get(index - 1);
     if (rsEvent.getEventName() != null) {
       newRsEvent.setEventName(rsEvent.getEventName());

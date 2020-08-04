@@ -73,7 +73,7 @@ class RsListApplicationTests {
         rsEvent.setEventName("买了空调");
         JsonMapper jsonMapper = new JsonMapper();
         String jsonString = jsonMapper.writeValueAsString(rsEvent);
-        mockMvc.perform(patch("/rs/event?index=2").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
+        mockMvc.perform(patch("/rs/2").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
                 .andExpect(status().isOk());
         mockMvc.perform(get("/rs/list"))
                 .andExpect(jsonPath("$", hasSize(2)))
@@ -86,7 +86,7 @@ class RsListApplicationTests {
         rsEvent = new RsEvent();
         rsEvent.setKeyWord("舒服");
         jsonString = jsonMapper.writeValueAsString(rsEvent);
-        mockMvc.perform(patch("/rs/event?index=2").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
+        mockMvc.perform(patch("/rs/2").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
                 .andExpect(status().isOk());
         mockMvc.perform(get("/rs/list"))
                 .andExpect(jsonPath("$", hasSize(2)))
