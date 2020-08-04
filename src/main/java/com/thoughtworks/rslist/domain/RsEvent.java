@@ -1,5 +1,8 @@
 package com.thoughtworks.rslist.domain;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class RsEvent {
     private String eventName;
     private String keyWord;
