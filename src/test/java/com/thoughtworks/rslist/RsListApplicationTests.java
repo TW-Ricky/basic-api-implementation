@@ -97,4 +97,14 @@ class RsListApplicationTests {
                 .andExpect(status().isOk());
     }
 
+    @Test
+    public void should_delete_rs_event() throws Exception {
+        mockMvc.perform(delete("/rs/2"))
+                .andExpect(status().isOk());
+        mockMvc.perform(get("/rs/list"))
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].eventName", is("热搜来了")))
+                .andExpect(jsonPath("$[0].keyWord", is("热搜")))
+                .andExpect(status().isOk());
+    }
 }
