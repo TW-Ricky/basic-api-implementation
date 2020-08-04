@@ -31,4 +31,15 @@ class RsListApplicationTests {
                 .andExpect(status().isOk());
     }
 
+    @Test
+    public void get_rs_event_between() throws Exception {
+        mockMvc.perform(get("/rs/list?start=1&end=2"))
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].eventName", is("热搜来了")))
+                .andExpect(jsonPath("$[0].keyWord", is("热搜")))
+                .andExpect(jsonPath("$[1].eventName", is("天气好热，没有空调")))
+                .andExpect(jsonPath("$[1].keyWord", is("难受")))
+                .andExpect(status().isOk());
+    }
+
 }
