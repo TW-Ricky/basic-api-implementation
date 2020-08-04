@@ -6,20 +6,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-<<<<<<< HEAD
 import org.springframework.test.web.servlet.MockMvc;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-=======
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
->>>>>>> data-binding
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -27,14 +20,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class RsListApplicationTests {
 
     @Autowired
-<<<<<<< HEAD
-    MockMvc mockMvc;
-
-    @Test
-    void springBootTest() throws Exception {
-        mockMvc.perform(get("/rs/list")).andExpect(status().isOk())
-                .andExpect(content().string("[第一条事件, 第二条事件, 第三条事件]"));
-=======
     private MockMvc mockMvc;
 
     @Autowired
@@ -110,7 +95,6 @@ class RsListApplicationTests {
                 .andExpect(jsonPath("$[1].eventName", is("买了空调")))
                 .andExpect(jsonPath("$[1].keyWord", is("舒服")))
                 .andExpect(status().isOk());
->>>>>>> data-binding
     }
 
     @Test
