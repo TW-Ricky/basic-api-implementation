@@ -11,8 +11,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -22,6 +21,9 @@ class RsListApplicationTests {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private RsEvent rsEvent;
 
     @Test
     public void get_rs_event() throws Exception {
@@ -48,7 +50,8 @@ class RsListApplicationTests {
 
     @Test
     public void should_add_rs_event() throws Exception {
-        RsEvent rsEvent = new RsEvent("超级热搜来了", "超级热搜");
+        rsEvent.setEventName("超级热搜来了");
+        rsEvent.setKeyWord("超级热搜");
         JsonMapper jsonMapper = new JsonMapper();
         String jsonString = jsonMapper.writeValueAsString(rsEvent);
 
@@ -62,6 +65,35 @@ class RsListApplicationTests {
                 .andExpect(jsonPath("$[1].keyWord", is("难受")))
                 .andExpect(jsonPath("$[2].eventName", is("超级热搜来了")))
                 .andExpect(jsonPath("$[2].keyWord", is("超级热搜")))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void should_patch_rs_event() throws Exception {
+        rsEvent.setEventName("买了空调");
+        JsonMapper jsonMapper = new JsonMapper();
+        String jsonString = jsonMapper.writeValueAsString(rsEvent);
+        mockMvc.perform(patch("/rs/event?index=2").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
+                .andExpect(status().isOk());
+        mockMvc.perform(get("/rs/list"))
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].eventName", is("热搜来了")))
+                .andExpect(jsonPath("$[0].keyWord", is("热搜")))
+                .andExpect(jsonPath("$[1].eventName", is("买了空调")))
+                .andExpect(jsonPath("$[1].keyWord", is("难受")))
+                .andExpect(status().isOk());
+
+        rsEvent = new RsEvent();
+        rsEvent.setKeyWord("舒服");
+        jsonString = jsonMapper.writeValueAsString(rsEvent);
+        mockMvc.perform(patch("/rs/event?index=2").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
+                .andExpect(status().isOk());
+        mockMvc.perform(get("/rs/list"))
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].eventName", is("热搜来了")))
+                .andExpect(jsonPath("$[0].keyWord", is("热搜")))
+                .andExpect(jsonPath("$[1].eventName", is("买了空调")))
+                .andExpect(jsonPath("$[1].keyWord", is("舒服")))
                 .andExpect(status().isOk());
     }
 
