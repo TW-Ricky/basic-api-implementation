@@ -1,5 +1,6 @@
 package com.thoughtworks.rslist.api;
 
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.thoughtworks.rslist.domain.RsEvent;
 import com.thoughtworks.rslist.domain.User;
@@ -38,12 +39,10 @@ class RsListApplicationTests {
         mockMvc.perform(get("/rs/1"))
                 .andExpect(jsonPath("$.eventName", is("热搜来了")))
                 .andExpect(jsonPath("$.keyWord", is("热搜")))
-                .andExpect(jsonPath("$.user.userName", is("ricky")))
                 .andExpect(status().isOk());
         mockMvc.perform(get("/rs/2"))
                 .andExpect(jsonPath("$.eventName", is("天气好热，没有空调")))
                 .andExpect(jsonPath("$.keyWord", is("难受")))
-                .andExpect(jsonPath("$.user.userName", is("ricky")))
                 .andExpect(status().isOk());
     }
 
@@ -54,10 +53,8 @@ class RsListApplicationTests {
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].eventName", is("热搜来了")))
                 .andExpect(jsonPath("$[0].keyWord", is("热搜")))
-                .andExpect(jsonPath("$[0].user.userName", is("ricky")))
                 .andExpect(jsonPath("$[1].eventName", is("天气好热，没有空调")))
                 .andExpect(jsonPath("$[1].keyWord", is("难受")))
-                .andExpect(jsonPath("$[1].user.userName", is("ricky")))
                 .andExpect(status().isOk());
     }
 
@@ -67,6 +64,7 @@ class RsListApplicationTests {
         User user = new User("ricky", "male", 19, "a@b.com", "18888888888");
         RsEvent rsEvent = new RsEvent("超级热搜来了", "超级热搜", user);
         JsonMapper jsonMapper = new JsonMapper();
+        jsonMapper.configure(MapperFeature.USE_ANNOTATIONS, false);
         String jsonString = jsonMapper.writeValueAsString(rsEvent);
 
         mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
@@ -75,13 +73,10 @@ class RsListApplicationTests {
                 .andExpect(jsonPath("$", hasSize(3)))
                 .andExpect(jsonPath("$[0].eventName", is("热搜来了")))
                 .andExpect(jsonPath("$[0].keyWord", is("热搜")))
-                .andExpect(jsonPath("$[0].user.userName", is("ricky")))
                 .andExpect(jsonPath("$[1].eventName", is("天气好热，没有空调")))
                 .andExpect(jsonPath("$[1].keyWord", is("难受")))
-                .andExpect(jsonPath("$[1].user.userName", is("ricky")))
                 .andExpect(jsonPath("$[2].eventName", is("超级热搜来了")))
                 .andExpect(jsonPath("$[2].keyWord", is("超级热搜")))
-                .andExpect(jsonPath("$[2].user.userName", is("ricky")))
                 .andExpect(status().isOk());
     }
 
@@ -91,6 +86,7 @@ class RsListApplicationTests {
         RsEvent rsEvent = new RsEvent();
         rsEvent.setEventName("买了空调");
         JsonMapper jsonMapper = new JsonMapper();
+        jsonMapper.configure(MapperFeature.USE_ANNOTATIONS, false);
         String jsonString = jsonMapper.writeValueAsString(rsEvent);
         mockMvc.perform(patch("/rs/2").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
                 .andExpect(status().isOk());
@@ -98,13 +94,10 @@ class RsListApplicationTests {
                 .andExpect(jsonPath("$", hasSize(3)))
                 .andExpect(jsonPath("$[0].eventName", is("热搜来了")))
                 .andExpect(jsonPath("$[0].keyWord", is("热搜")))
-                .andExpect(jsonPath("$[0].user.userName", is("ricky")))
                 .andExpect(jsonPath("$[1].eventName", is("买了空调")))
                 .andExpect(jsonPath("$[1].keyWord", is("难受")))
-                .andExpect(jsonPath("$[1].user.userName", is("ricky")))
                 .andExpect(jsonPath("$[2].eventName", is("超级热搜来了")))
                 .andExpect(jsonPath("$[2].keyWord", is("超级热搜")))
-                .andExpect(jsonPath("$[2].user.userName", is("ricky")))
                 .andExpect(status().isOk());
 
         rsEvent = new RsEvent();
@@ -116,13 +109,10 @@ class RsListApplicationTests {
                 .andExpect(jsonPath("$", hasSize(3)))
                 .andExpect(jsonPath("$[0].eventName", is("热搜来了")))
                 .andExpect(jsonPath("$[0].keyWord", is("热搜")))
-                .andExpect(jsonPath("$[0].user.userName", is("ricky")))
                 .andExpect(jsonPath("$[1].eventName", is("买了空调")))
                 .andExpect(jsonPath("$[1].keyWord", is("舒服")))
-                .andExpect(jsonPath("$[1].user.userName", is("ricky")))
                 .andExpect(jsonPath("$[2].eventName", is("超级热搜来了")))
                 .andExpect(jsonPath("$[2].keyWord", is("超级热搜")))
-                .andExpect(jsonPath("$[2].user.userName", is("ricky")))
                 .andExpect(status().isOk());
     }
 
@@ -135,10 +125,8 @@ class RsListApplicationTests {
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].eventName", is("热搜来了")))
                 .andExpect(jsonPath("$[0].keyWord", is("热搜")))
-                .andExpect(jsonPath("$[0].user.userName", is("ricky")))
                 .andExpect(jsonPath("$[1].eventName", is("超级热搜来了")))
                 .andExpect(jsonPath("$[1].keyWord", is("超级热搜")))
-                .andExpect(jsonPath("$[1].user.userName", is("ricky")))
                 .andExpect(status().isOk());
     }
 
@@ -149,6 +137,7 @@ class RsListApplicationTests {
         rsEvent.setKeyWord("测试");
         rsEvent.setUser(user);
         JsonMapper jsonMapper = new JsonMapper();
+        jsonMapper.configure(MapperFeature.USE_ANNOTATIONS, false);
         String jsonString = jsonMapper.writeValueAsString(rsEvent);
 
         mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
@@ -162,6 +151,7 @@ class RsListApplicationTests {
         rsEvent.setEventName("测试");
         rsEvent.setUser(user);
         JsonMapper jsonMapper = new JsonMapper();
+        jsonMapper.configure(MapperFeature.USE_ANNOTATIONS, false);
         String jsonString = jsonMapper.writeValueAsString(rsEvent);
         mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
                 .andExpect(status().isBadRequest());
@@ -173,6 +163,7 @@ class RsListApplicationTests {
         rsEvent.setKeyWord("测试");
         rsEvent.setEventName("测试");
         JsonMapper jsonMapper = new JsonMapper();
+        jsonMapper.configure(MapperFeature.USE_ANNOTATIONS, false);
         String jsonString = jsonMapper.writeValueAsString(rsEvent);
 
         mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
@@ -190,6 +181,7 @@ class RsListApplicationTests {
         rsEvent.setKeyWord("测试");
         rsEvent.setUser(user);
         JsonMapper jsonMapper = new JsonMapper();
+        jsonMapper.configure(MapperFeature.USE_ANNOTATIONS, false);
         String jsonString = jsonMapper.writeValueAsString(rsEvent);
 
         mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
@@ -207,6 +199,7 @@ class RsListApplicationTests {
         rsEvent.setKeyWord("测试");
         rsEvent.setUser(user);
         JsonMapper jsonMapper = new JsonMapper();
+        jsonMapper.configure(MapperFeature.USE_ANNOTATIONS, false);
         String jsonString = jsonMapper.writeValueAsString(rsEvent);
 
         mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
@@ -224,6 +217,7 @@ class RsListApplicationTests {
         rsEvent.setKeyWord("测试");
         rsEvent.setUser(user);
         JsonMapper jsonMapper = new JsonMapper();
+        jsonMapper.configure(MapperFeature.USE_ANNOTATIONS, false);
         String jsonString = jsonMapper.writeValueAsString(rsEvent);
 
         mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
@@ -241,6 +235,7 @@ class RsListApplicationTests {
         rsEvent.setKeyWord("测试");
         rsEvent.setUser(user);
         JsonMapper jsonMapper = new JsonMapper();
+        jsonMapper.configure(MapperFeature.USE_ANNOTATIONS, false);
         String jsonString = jsonMapper.writeValueAsString(rsEvent);
 
         mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
@@ -258,6 +253,7 @@ class RsListApplicationTests {
         rsEvent.setKeyWord("测试");
         rsEvent.setUser(user);
         JsonMapper jsonMapper = new JsonMapper();
+        jsonMapper.configure(MapperFeature.USE_ANNOTATIONS, false);
         String jsonString = jsonMapper.writeValueAsString(rsEvent);
 
         mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
@@ -269,6 +265,7 @@ class RsListApplicationTests {
         User user = new User("ricky", "male", 19, "a@b.com", "18888888888");
         RsEvent rsEvent = new RsEvent("超级热搜来了", "超级热搜", user);
         JsonMapper jsonMapper = new JsonMapper();
+        jsonMapper.configure(MapperFeature.USE_ANNOTATIONS, false);
         String jsonString = jsonMapper.writeValueAsString(rsEvent);
 
         MvcResult result = mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
