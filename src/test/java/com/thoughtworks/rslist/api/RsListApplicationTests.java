@@ -1,4 +1,4 @@
-package com.thoughtworks.rslist;
+package com.thoughtworks.rslist.api;
 
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.thoughtworks.rslist.domain.RsEvent;
@@ -12,11 +12,16 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MvcResult;
+
+import java.util.Arrays;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -259,6 +264,18 @@ class RsListApplicationTests {
 
         mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void should_return_response_with_index_when_post_a_add_request() throws Exception {
+        User user = new User("ricky", "male", 19, "a@b.com", "18888888888");
+        RsEvent rsEvent = new RsEvent("超级热搜来了", "超级热搜", user);
+        JsonMapper jsonMapper = new JsonMapper();
+        String jsonString = jsonMapper.writeValueAsString(rsEvent);
+
+        MvcResult result = mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
+                .andDo(print())
+                .andReturn();
     }
 
 }

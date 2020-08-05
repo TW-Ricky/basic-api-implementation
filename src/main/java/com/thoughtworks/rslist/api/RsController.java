@@ -49,7 +49,7 @@ public class RsController {
       userController.addUser(rsEvent.getUser());
     }
     rsList.add(rsEvent);
-    return ResponseEntity.ok().build();
+    return ResponseEntity.created(null).header("index", String.valueOf(rsList.size())).build();
   }
 
   @PatchMapping("/rs/{index}")
