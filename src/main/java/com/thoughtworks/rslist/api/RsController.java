@@ -30,6 +30,9 @@ public class RsController {
 
   @GetMapping("/rs/{index}")
   public ResponseEntity getRsEventList(@PathVariable int index) {
+    if (index <= 0 || index > rsList.size()) {
+      throw new RsEventNotValidException("invalid index");
+    }
       return ResponseEntity.ok(rsList.get(index - 1));
   }
 
@@ -42,7 +45,7 @@ public class RsController {
     if (end == null) {
       end = rsList.size();
     }
-    if (start < 0 || end > rsList.size() || start > end) {
+    if (start <= 0 || end > rsList.size() || start > end) {
       throw new RsEventNotValidException("invalid request param");
     }
     return ResponseEntity.ok(rsList.subList(start - 1, end));
