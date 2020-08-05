@@ -1,12 +1,14 @@
 package com.thoughtworks.rslist.api;
 
 
+import com.thoughtworks.rslist.domain.User;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.thoughtworks.rslist.domain.RsEvent;
 import org.springframework.web.bind.annotation.*;
 
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,9 +17,10 @@ public class RsController {
   private List<RsEvent> rsList = initRsList();
 
   private List<RsEvent> initRsList() {
+    User user = new User("ricky", "male", 19, "a@b.com", "18888888888");
     List<RsEvent> rsEvents = new ArrayList<>();
-    rsEvents.add(new RsEvent("热搜来了", "热搜"));
-    rsEvents.add(new RsEvent("天气好热，没有空调", "难受"));
+    rsEvents.add(new RsEvent("热搜来了", "热搜", user));
+    rsEvents.add(new RsEvent("天气好热，没有空调", "难受", user));
     return rsEvents;
   }
 
@@ -39,7 +42,11 @@ public class RsController {
   }
 
   @PostMapping("/rs/event")
-  private void addRsEvent(@RequestBody RsEvent rsEvent) {
+  private void addRsEvent(@RequestBody @Valid RsEvent rsEvent) {
+    UserController userController = new UserController();
+    if (!userController.checkUser(rsEvent.getUser().getUserName())) {
+      userController.addUser(rsEvent.getUser());
+    }
     rsList.add(rsEvent);
   }
 

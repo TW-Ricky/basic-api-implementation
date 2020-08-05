@@ -13,6 +13,13 @@ import java.util.List;
 public class UserController {
     List<User> userList = new ArrayList<>();
 
+    public boolean checkUser(String userName) {
+        long count = userList.stream().filter(it -> it.getUserName().equals(userName)).count();
+        return count > 0;
+    }
+    public void addUser(User user) {
+        userList.add(user);
+    }
     @PostMapping("/user")
     public void registerUser(@RequestBody @Valid User user) {
         userList.add(user);

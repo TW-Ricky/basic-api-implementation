@@ -23,7 +23,7 @@ class UserControllerTest {
 
     @Test
     public void should_register_user() throws Exception {
-        User user = new User("gangyue", "male", 19, "a@b.com", "18888888888");
+        User user = new User("ricky", "male", 19, "a@b.com", "18888888888");
         JsonMapper jsonMapper = new JsonMapper();
         String jsonString = jsonMapper.writeValueAsString(user);
         mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
@@ -32,7 +32,7 @@ class UserControllerTest {
 
     @Test
     public void should_validate_name_more_than_8() throws Exception {
-        User user = new User("gangyuexxx", "male", 19, "a@b.com", "18888888888");
+        User user = new User("ricky", "male", 19, "a@b.com", "18888888888");
         JsonMapper jsonMapper = new JsonMapper();
         String jsonString = jsonMapper.writeValueAsString(user);
         mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
@@ -40,7 +40,7 @@ class UserControllerTest {
     }
     @Test
     public void should_validate_age_between_18_and_100() throws Exception {
-        User user = new User("gangyue", "male", 15, "a@b.com", "18888888888");
+        User user = new User("ricky", "male", 15, "a@b.com", "18888888888");
         JsonMapper jsonMapper = new JsonMapper();
         String jsonString = jsonMapper.writeValueAsString(user);
         mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
@@ -48,7 +48,7 @@ class UserControllerTest {
     }
     @Test
     public void should_validate_email_suit_format() throws Exception {
-        User user = new User("gangyue", "male", 19, "ab.com", "18888888888");
+        User user = new User("ricky", "male", 19, "ab.com", "18888888888");
         JsonMapper jsonMapper = new JsonMapper();
         String jsonString = jsonMapper.writeValueAsString(user);
         mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
@@ -56,7 +56,7 @@ class UserControllerTest {
     }
     @Test
     public void should_validate_phone_suit_format() throws Exception {
-        User user = new User("gangyue", "male", 19, "a@b.com", "188888888888");
+        User user = new User("ricky", "male", 19, "a@b.com", "188888888888");
         JsonMapper jsonMapper = new JsonMapper();
         String jsonString = jsonMapper.writeValueAsString(user);
         mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))

@@ -5,7 +5,7 @@ import javax.validation.constraints.*;
 public class User {
     @NotNull
     @Size(max = 8)
-    private String name;
+    private String userName;
     @NotNull
     private String gender;
     @NotNull
@@ -19,8 +19,8 @@ public class User {
     private String phone;
     private int voteNumber = 10;
 
-    public User(String name, String gender, int age, String email, String phone) {
-        this.name = name;
+    public User(String userName, String gender, int age, String email, String phone) {
+        this.userName = userName;
         this.gender = gender;
         this.age = age;
         this.email = email;
@@ -30,7 +30,7 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
-                "name='" + name + '\'' +
+                "name='" + userName + '\'' +
                 ", gender='" + gender + '\'' +
                 ", age=" + age +
                 ", email='" + email + '\'' +
@@ -39,12 +39,12 @@ public class User {
                 '}';
     }
 
-    public String getName() {
-        return name;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getGender() {

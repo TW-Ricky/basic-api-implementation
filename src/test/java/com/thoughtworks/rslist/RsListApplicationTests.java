@@ -2,6 +2,7 @@ package com.thoughtworks.rslist;
 
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.thoughtworks.rslist.domain.RsEvent;
+import com.thoughtworks.rslist.domain.User;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -34,10 +35,12 @@ class RsListApplicationTests {
         mockMvc.perform(get("/rs/1"))
                 .andExpect(jsonPath("$.eventName", is("热搜来了")))
                 .andExpect(jsonPath("$.keyWord", is("热搜")))
+                .andExpect(jsonPath("$.user.userName", is("ricky")))
                 .andExpect(status().isOk());
         mockMvc.perform(get("/rs/2"))
                 .andExpect(jsonPath("$.eventName", is("天气好热，没有空调")))
                 .andExpect(jsonPath("$.keyWord", is("难受")))
+                .andExpect(jsonPath("$.user.userName", is("ricky")))
                 .andExpect(status().isOk());
     }
 
@@ -48,15 +51,18 @@ class RsListApplicationTests {
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].eventName", is("热搜来了")))
                 .andExpect(jsonPath("$[0].keyWord", is("热搜")))
+                .andExpect(jsonPath("$[0].user.userName", is("ricky")))
                 .andExpect(jsonPath("$[1].eventName", is("天气好热，没有空调")))
                 .andExpect(jsonPath("$[1].keyWord", is("难受")))
+                .andExpect(jsonPath("$[1].user.userName", is("ricky")))
                 .andExpect(status().isOk());
     }
 
     @Test
     @Order(3)
     public void should_add_rs_event() throws Exception {
-        RsEvent rsEvent = new RsEvent("超级热搜来了", "超级热搜");
+        User user = new User("ricky", "male", 19, "a@b.com", "18888888888");
+        RsEvent rsEvent = new RsEvent("超级热搜来了", "超级热搜", user);
         JsonMapper jsonMapper = new JsonMapper();
         String jsonString = jsonMapper.writeValueAsString(rsEvent);
 
@@ -66,10 +72,13 @@ class RsListApplicationTests {
                 .andExpect(jsonPath("$", hasSize(3)))
                 .andExpect(jsonPath("$[0].eventName", is("热搜来了")))
                 .andExpect(jsonPath("$[0].keyWord", is("热搜")))
+                .andExpect(jsonPath("$[0].user.userName", is("ricky")))
                 .andExpect(jsonPath("$[1].eventName", is("天气好热，没有空调")))
                 .andExpect(jsonPath("$[1].keyWord", is("难受")))
+                .andExpect(jsonPath("$[1].user.userName", is("ricky")))
                 .andExpect(jsonPath("$[2].eventName", is("超级热搜来了")))
                 .andExpect(jsonPath("$[2].keyWord", is("超级热搜")))
+                .andExpect(jsonPath("$[2].user.userName", is("ricky")))
                 .andExpect(status().isOk());
     }
 
@@ -86,10 +95,13 @@ class RsListApplicationTests {
                 .andExpect(jsonPath("$", hasSize(3)))
                 .andExpect(jsonPath("$[0].eventName", is("热搜来了")))
                 .andExpect(jsonPath("$[0].keyWord", is("热搜")))
+                .andExpect(jsonPath("$[0].user.userName", is("ricky")))
                 .andExpect(jsonPath("$[1].eventName", is("买了空调")))
                 .andExpect(jsonPath("$[1].keyWord", is("难受")))
+                .andExpect(jsonPath("$[1].user.userName", is("ricky")))
                 .andExpect(jsonPath("$[2].eventName", is("超级热搜来了")))
                 .andExpect(jsonPath("$[2].keyWord", is("超级热搜")))
+                .andExpect(jsonPath("$[2].user.userName", is("ricky")))
                 .andExpect(status().isOk());
 
         rsEvent = new RsEvent();
@@ -101,10 +113,13 @@ class RsListApplicationTests {
                 .andExpect(jsonPath("$", hasSize(3)))
                 .andExpect(jsonPath("$[0].eventName", is("热搜来了")))
                 .andExpect(jsonPath("$[0].keyWord", is("热搜")))
+                .andExpect(jsonPath("$[0].user.userName", is("ricky")))
                 .andExpect(jsonPath("$[1].eventName", is("买了空调")))
                 .andExpect(jsonPath("$[1].keyWord", is("舒服")))
+                .andExpect(jsonPath("$[1].user.userName", is("ricky")))
                 .andExpect(jsonPath("$[2].eventName", is("超级热搜来了")))
                 .andExpect(jsonPath("$[2].keyWord", is("超级热搜")))
+                .andExpect(jsonPath("$[2].user.userName", is("ricky")))
                 .andExpect(status().isOk());
     }
 
@@ -117,8 +132,11 @@ class RsListApplicationTests {
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].eventName", is("热搜来了")))
                 .andExpect(jsonPath("$[0].keyWord", is("热搜")))
+                .andExpect(jsonPath("$[0].user.userName", is("ricky")))
                 .andExpect(jsonPath("$[1].eventName", is("超级热搜来了")))
                 .andExpect(jsonPath("$[1].keyWord", is("超级热搜")))
+                .andExpect(jsonPath("$[1].user.userName", is("ricky")))
                 .andExpect(status().isOk());
     }
+
 }
