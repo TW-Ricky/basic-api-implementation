@@ -37,8 +37,6 @@ public class UserController {
 
     @GetMapping("/users")
     public ResponseEntity getUserList() {
-        List<UserView> userViews = new ArrayList<>();
-        userList.stream().forEach(it -> userViews.add(new UserView(it)));
-        return ResponseEntity.ok(userViews);
+        return ResponseEntity.ok(userList);
     }
 }
