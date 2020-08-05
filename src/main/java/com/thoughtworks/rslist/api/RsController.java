@@ -2,6 +2,7 @@ package com.thoughtworks.rslist.api;
 
 
 import com.thoughtworks.rslist.domain.User;
+import com.thoughtworks.rslist.exception.RsEventNotValidException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -10,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +41,9 @@ public class RsController {
     }
     if (end == null) {
       end = rsList.size();
+    }
+    if (start < 0 || end > rsList.size() || start > end) {
+      throw new RsEventNotValidException("invalid request param");
     }
     return ResponseEntity.ok(rsList.subList(start - 1, end));
   }
