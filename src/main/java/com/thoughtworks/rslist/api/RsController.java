@@ -76,6 +76,9 @@ public class RsController {
 
   @DeleteMapping("/rs/{index}")
   private ResponseEntity deleteRsEvent(@PathVariable Integer index) {
+    if (index <= 0 || index > rsList.size()) {
+      throw new RsEventNotValidException("invalid index");
+    }
     rsList.remove(index - 1);
     return ResponseEntity.ok().build();
   }
