@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class RsEventExceptionHandler {
 
     @ExceptionHandler({RsEventNotValidException.class, MethodArgumentNotValidException.class})
-    public ResponseEntity RsEventNotValidExceptionHandler(Exception e) {
+    public ResponseEntity rsEventNotValidExceptionHandler(Exception e) {
         Error error = new Error(e.getMessage());
         System.out.println(e.getLocalizedMessage());
         if (e instanceof MethodArgumentNotValidException) {
