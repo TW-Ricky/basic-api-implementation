@@ -1,7 +1,12 @@
 package com.thoughtworks.rslist.api;
 
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.thoughtworks.rslist.domain.RsEvent;
 import com.thoughtworks.rslist.domain.User;
+import com.thoughtworks.rslist.service.RsEventService;
+import com.thoughtworks.rslist.service.UserService;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -20,6 +25,15 @@ class UserControllerTest {
 
     @Autowired
     MockMvc mockMvc;
+    @Autowired
+    private UserService userService;
+
+    @BeforeEach
+    private void setUp() {
+        userService.deleteAll();
+        User user = new User("ricky", "male", 19, "a@b.com", "18888888888");
+        userService.addUser(user);
+    }
 
     @Test
     public void should_register_user() throws Exception {
