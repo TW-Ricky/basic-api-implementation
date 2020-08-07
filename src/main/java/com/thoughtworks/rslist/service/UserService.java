@@ -12,7 +12,7 @@ public interface UserService {
 
     List<User> getUserList();
 
-    User getUserByIndex(int index);
+    User getUserById(int index);
 
     void deleteAll();
 }

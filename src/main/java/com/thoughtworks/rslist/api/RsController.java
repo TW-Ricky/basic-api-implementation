@@ -1,7 +1,6 @@
 package com.thoughtworks.rslist.api;
 
 
-import com.thoughtworks.rslist.exception.RsEventNotValidException;
 import com.thoughtworks.rslist.service.RsEventService;
 import com.thoughtworks.rslist.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

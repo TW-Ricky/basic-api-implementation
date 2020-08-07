@@ -1,15 +1,12 @@
 package com.thoughtworks.rslist.api;
 
-import com.thoughtworks.rslist.domain.Error;
 import com.thoughtworks.rslist.domain.User;
 import com.thoughtworks.rslist.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
