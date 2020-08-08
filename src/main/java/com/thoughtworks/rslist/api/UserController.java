@@ -30,4 +30,10 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserById(index));
     }
 
+    @DeleteMapping("/user/{index}")
+    public ResponseEntity deleteUserById(@PathVariable int index) {
+        userService.deleteUserById(index);
+        return ResponseEntity.ok().build();
+    }
+
 }

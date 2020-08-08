@@ -15,4 +15,6 @@ public interface UserService {
     User getUserById(int index);
 
     void deleteAll();
+
+    void deleteUserById(int index);
 }
