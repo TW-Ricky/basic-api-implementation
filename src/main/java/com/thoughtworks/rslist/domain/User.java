@@ -1,9 +1,19 @@
 package com.thoughtworks.rslist.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.*;
 
+@Component
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class User {
     @NotNull
     @Size(max = 8)
@@ -27,74 +37,4 @@ public class User {
     // @JsonProperty("user_vote_number")
     private int voteNumber = 10;
 
-    public User() {
-    }
-
-    public User(String userName, String gender, int age, String email, String phone) {
-        this.userName = userName;
-        this.gender = gender;
-        this.age = age;
-        this.email = email;
-        this.phone = phone;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "name='" + userName + '\'' +
-                ", gender='" + gender + '\'' +
-                ", age=" + age +
-                ", email='" + email + '\'' +
-                ", phone='" + phone + '\'' +
-                ", voteNumber=" + voteNumber +
-                '}';
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public int getVoteNumber() {
-        return voteNumber;
-    }
-
-    public void setVoteNumber(int voteNumber) {
-        this.voteNumber = voteNumber;
-    }
 }

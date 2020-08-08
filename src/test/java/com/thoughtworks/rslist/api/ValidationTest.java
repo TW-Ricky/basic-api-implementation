@@ -26,34 +26,51 @@ public class ValidationTest {
     private RsEventService rsEventService;
     @Autowired
     private UserService userService;
-
     private JsonMapper jsonMapper;
 
     @BeforeEach
     private void setUp() {
         userService.deleteAll();
         rsEventService.deleteAll();
-        User user = new User("ricky", "male", 19, "a@b.com", "18888888888");
+        User user = User.builder()
+                .userName("ricky")
+                .age(19)
+                .email("a@b.com")
+                .gender("male")
+                .phone("18888888888")
+                .build();
         userService.addUser(user);
-        rsEventService.addRsEvent(new RsEvent("热搜来了", "热搜", user));
-        rsEventService.addRsEvent(new RsEvent("天气好热，没有空调", "难受", user));
+        rsEventService.addRsEvent(RsEvent.builder().eventName("热搜来了").keyword("热搜").userId(1).build());
+        rsEventService.addRsEvent(RsEvent.builder().eventName("天气好热，没有空调").keyword("难受").userId(1).build());
         jsonMapper = new JsonMapper();
         jsonMapper.configure(MapperFeature.USE_ANNOTATIONS, false);
     }
 
     @Test
     public void should_not_add_rs_event_when_given_a_null_event_name() throws Exception {
-        User user = new User("ricky", "male", 19, "a@b.com", "18888888888");
-        RsEvent rsEvent = new RsEvent(null, "测试", user);
+        User user = User.builder()
+                .userName("ricky")
+                .age(19)
+                .email("a@b.com")
+                .gender("male")
+                .phone("18888888888")
+                .build();
+        RsEvent rsEvent = RsEvent.builder().keyword("测试").userId(1).build();
         String jsonString = jsonMapper.writeValueAsString(rsEvent);
         mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
-    public void should_not_add_rs_event_when_given_a_null_keyWord() throws Exception {
-        User user = new User("ricky", "male", 19, "a@b.com", "18888888888");
-        RsEvent rsEvent = new RsEvent("测试", null, user);
+    public void should_not_add_rs_event_when_given_a_null_keyword() throws Exception {
+        User user = User.builder()
+                .userName("ricky")
+                .age(19)
+                .email("a@b.com")
+                .gender("male")
+                .phone("18888888888")
+                .build();
+        RsEvent rsEvent = RsEvent.builder().eventName("测试").userId(1).build();
         String jsonString = jsonMapper.writeValueAsString(rsEvent);
         mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
                 .andExpect(status().isBadRequest());
@@ -61,7 +78,7 @@ public class ValidationTest {
 
     @Test
     public void should_not_add_rs_event_when_given_a_null_user() throws Exception {
-        RsEvent rsEvent = new RsEvent("测试", "测试", null);
+        RsEvent rsEvent = RsEvent.builder().eventName("测试").keyword("测试").build();
         String jsonString = jsonMapper.writeValueAsString(rsEvent);
         mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
                 .andExpect(status().isBadRequest());
@@ -69,40 +86,66 @@ public class ValidationTest {
 
     @Test
     public void should_not_add_rs_event_when_given_a_null_user_name() throws Exception {
-        User user = new User(null, "male", 19, "a@b.com", "18888888888");
-        RsEvent rsEvent = new RsEvent("测试", "测试", user);
+        User user = User.builder()
+                .age(19)
+                .email("a@b.com")
+                .gender("male")
+                .phone("18888888888")
+                .build();
+        RsEvent rsEvent = new RsEvent("测试", "测试", 1);
         String jsonString = jsonMapper.writeValueAsString(rsEvent);
         mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
                 .andExpect(status().isBadRequest());
     }
     @Test
     public void should_not_add_rs_event_when_given_a_null_gander() throws Exception {
-        User user = new User("ricky", null, 19, "a@b.com", "18888888888");
-        RsEvent rsEvent = new RsEvent("测试", "测试", user);
+        User user = User.builder()
+                .userName("ricky")
+                .age(19)
+                .email("a@b.com")
+                .phone("18888888888")
+                .build();
+        RsEvent rsEvent = new RsEvent("测试", "测试", 1);
         String jsonString = jsonMapper.writeValueAsString(rsEvent);
         mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
                 .andExpect(status().isBadRequest());
     }
     @Test
     public void should_not_add_rs_event_when_given_a_null_email() throws Exception {
-        User user = new User("ricky", "male", 19, null, "18888888888");
-        RsEvent rsEvent = new RsEvent("测试", "测试", user);
+        User user = User.builder()
+                .userName("ricky")
+                .age(19)
+                .gender("male")
+                .phone("18888888888")
+                .build();
+        RsEvent rsEvent = new RsEvent("测试", "测试", 1);
         String jsonString = jsonMapper.writeValueAsString(rsEvent);
         mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
                 .andExpect(status().isBadRequest());
     }
     @Test
     public void should_not_add_rs_event_when_given_a_null_phone() throws Exception {
-        User user = new User("ricky", "male", 19, "a@b.com", null);
-        RsEvent rsEvent = new RsEvent("测试", "测试", user);
+        User user = User.builder()
+                .userName("ricky")
+                .age(19)
+                .email("a@b.com")
+                .gender("male")
+                .build();
+        RsEvent rsEvent = new RsEvent("测试", "测试", 1);
         String jsonString = jsonMapper.writeValueAsString(rsEvent);
         mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
                 .andExpect(status().isBadRequest());
     }
     @Test
     public void should_not_add_rs_event_when_given_a_user_name_over_8() throws Exception {
-        User user = new User("rickyxxxx", "male", 19, "a@b.com", "18888888888");
-        RsEvent rsEvent = new RsEvent("测试", "测试", user);
+        User user = User.builder()
+                .userName("rickyxxxx")
+                .age(19)
+                .email("a@b.com")
+                .gender("male")
+                .phone("18888888888")
+                .build();
+        RsEvent rsEvent = new RsEvent("测试", "测试", 1);
         String jsonString = jsonMapper.writeValueAsString(rsEvent);
 
         mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
@@ -110,8 +153,14 @@ public class ValidationTest {
     }
     @Test
     public void should_not_add_rs_event_when_given_age_overflow() throws Exception {
-        User user = new User("ricky", "male", 15, "a@b.com", "18888888888");
-        RsEvent rsEvent = new RsEvent("测试", "测试", user);
+        User user = User.builder()
+                .userName("ricky")
+                .age(15)
+                .email("a@b.com")
+                .gender("male")
+                .phone("18888888888")
+                .build();
+        RsEvent rsEvent = new RsEvent("测试", "测试", 1);
         String jsonString = jsonMapper.writeValueAsString(rsEvent);
 
         mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
@@ -119,16 +168,28 @@ public class ValidationTest {
     }
     @Test
     public void should_not_add_rs_event_when_given_error_email() throws Exception {
-        User user = new User("ricky", "male", 19, "ab.com", "18888888888");
-        RsEvent rsEvent = new RsEvent("测试", "测试", user);
+        User user = User.builder()
+                .userName("ricky")
+                .age(19)
+                .email("ab.com")
+                .gender("male")
+                .phone("18888888888")
+                .build();
+        RsEvent rsEvent = new RsEvent("测试", "测试", 1);
         String jsonString = jsonMapper.writeValueAsString(rsEvent);
         mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
                 .andExpect(status().isBadRequest());
     }
     @Test
     public void should_not_add_rs_event_when_given_error_phone() throws Exception {
-        User user = new User("ricky", "male", 19, "a@b.com", "188888888881");
-        RsEvent rsEvent = new RsEvent("测试", "测试", user);
+        User user = User.builder()
+                .userName("ricky")
+                .age(19)
+                .email("a@b.com")
+                .gender("male")
+                .phone("188888888881")
+                .build();
+        RsEvent rsEvent = new RsEvent("测试", "测试", 1);
         String jsonString = jsonMapper.writeValueAsString(rsEvent);
         mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
                 .andExpect(status().isBadRequest());

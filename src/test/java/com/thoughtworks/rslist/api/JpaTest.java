@@ -1,8 +1,11 @@
 package com.thoughtworks.rslist.api;
 
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.thoughtworks.rslist.domain.RsEvent;
 import com.thoughtworks.rslist.domain.User;
+import com.thoughtworks.rslist.service.RsEventService;
 import com.thoughtworks.rslist.service.UserService;
+import javafx.print.Printer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +14,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultHandler;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 import java.util.List;
 
@@ -27,20 +32,41 @@ public class JpaTest {
     MockMvc mockMvc;
     @Autowired
     private UserService userService;
+    @Autowired
+    private RsEventService rsEventService;
     JsonMapper jsonMapper;
 
 
     @BeforeEach
     private void setUp() {
         userService.deleteAll();
-        User user = new User("ricky", "male", 19, "a@b.com", "18888888888");
-        userService.addUser(user);
+        rsEventService.deleteAll();
+        User user = User.builder()
+                .userName("ricky")
+                .age(19)
+                .email("a@b.com")
+                .gender("male")
+                .phone("18888888888")
+                .build();
+        Integer userId = userService.addUser(user);
+        RsEvent rsEvent = RsEvent.builder()
+                .eventName("热搜来了")
+                .keyword("热搜")
+                .userId(userId)
+                .build();
+        rsEventService.addRsEvent(rsEvent);
         jsonMapper = new JsonMapper();
     }
 
     @Test
     public void should_add_user_into_mysql_use_jpa() throws Exception {
-        User user = new User("xiaoli", "male", 19, "a@b.com", "18888888888");
+        User user = User.builder()
+                .userName("xiaoli")
+                .age(19)
+                .email("a@b.com")
+                .gender("male")
+                .phone("18888888888")
+                .build();
         String jsonString = jsonMapper.writeValueAsString(user);
         mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
                 .andExpect(status().isCreated());
@@ -51,7 +77,13 @@ public class JpaTest {
 
     @Test
     public void should_get_user_by_id() throws Exception {
-        User user = new User("xiaoli", "female", 19, "a@b.com", "18888888888");
+        User user = User.builder()
+                .userName("xiaoli")
+                .age(19)
+                .email("a@b.com")
+                .gender("male")
+                .phone("18888888888")
+                .build();
         String jsonString = jsonMapper.writeValueAsString(user);
         String userId = mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
                 .andExpect(status().isCreated())
@@ -64,13 +96,25 @@ public class JpaTest {
 
     @Test
     public void should_delete_ser_by_id() throws Exception {
-        User user = new User("xiaoli", "female", 19, "a@b.com", "18888888888");
+        User user = User.builder()
+                .userName("xiaoli")
+                .age(19)
+                .email("a@b.com")
+                .gender("male")
+                .phone("18888888888")
+                .build();
         String jsonString = jsonMapper.writeValueAsString(user);
         String userId = mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
                 .andExpect(status().isCreated())
                 .andReturn().getResponse().getContentAsString();
 
-        user = new User("xiaobai", "female", 19, "a@b.com", "18888888888");
+        user = User.builder()
+                .userName("xiaobai")
+                .age(19)
+                .email("a@b.com")
+                .gender("male")
+                .phone("18888888888")
+                .build();
         jsonString = jsonMapper.writeValueAsString(user);
         mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
                 .andExpect(status().isCreated());
@@ -82,4 +126,22 @@ public class JpaTest {
                 .andExpect(jsonPath("$[1].userName", is("xiaobai")))
                 .andExpect(status().isOk());
     }
+    @Test
+    public void should_add_rs_event_into_mysql() throws Exception {
+        RsEvent rsEvent = RsEvent.builder()
+                .eventName("超级热搜来了")
+                .keyword("超级热搜")
+                .userId(1)
+                .build();
+        String jsonString = jsonMapper.writeValueAsString(rsEvent);
+        mockMvc.perform(post("/rs/event").content(jsonString).characterEncoding("utf-8").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated());
+        mockMvc.perform(get("/rs/list"))
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].eventName", is("热搜来了")))
+                .andExpect(jsonPath("$[1].eventName", is("超级热搜来了")))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk());
+    }
+
 }

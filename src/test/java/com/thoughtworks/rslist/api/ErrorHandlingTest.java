@@ -34,10 +34,16 @@ public class ErrorHandlingTest {
     private void init() {
         userService.deleteAll();
         rsEventService.deleteAll();
-        User user = new User("ricky", "male", 19, "a@b.com", "18888888888");
+        User user = User.builder()
+                .userName("xiaobai")
+                .age(19)
+                .email("a@b.com")
+                .gender("male")
+                .phone("18888888888")
+                .build();
         userService.addUser(user);
-        rsEventService.addRsEvent(new RsEvent("热搜来了", "热搜", user));
-        rsEventService.addRsEvent(new RsEvent("天气好热，没有空调", "难受", user));
+        rsEventService.addRsEvent(new RsEvent("热搜来了", "热搜", 1));
+        rsEventService.addRsEvent(new RsEvent("天气好热，没有空调", "难受", 1));
     }
 
     @Test
@@ -56,8 +62,14 @@ public class ErrorHandlingTest {
 
     @Test
     public void should_throw_exception_when_post_rs_event_invalid_param() throws Exception {
-        User user = new User("ricky", "male", 19, "a@b.com", "18888888888");
-        RsEvent rsEvent = new RsEvent(null, "测试", user);
+        User user = User.builder()
+                .userName("xiaobai")
+                .age(19)
+                .email("a@b.com")
+                .gender("male")
+                .phone("18888888888")
+                .build();
+        RsEvent rsEvent = new RsEvent(null, "测试", 1);
         JsonMapper jsonMapper = new JsonMapper();
         jsonMapper.configure(MapperFeature.USE_ANNOTATIONS, false);
         String jsonString = jsonMapper.writeValueAsString(rsEvent);
@@ -68,7 +80,13 @@ public class ErrorHandlingTest {
 
     @Test
     public void should_throw_exception_when_post_user_invalid_user() throws Exception {
-        User user = new User("ricky", "male", 15, "a@b.com", "18888888888");
+        User user = User.builder()
+                .userName("xiaobai")
+                .age(15)
+                .email("a@b.com")
+                .gender("male")
+                .phone("18888888888")
+                .build();
         JsonMapper jsonMapper = new JsonMapper();
         String jsonString = jsonMapper.writeValueAsString(user);
         mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))

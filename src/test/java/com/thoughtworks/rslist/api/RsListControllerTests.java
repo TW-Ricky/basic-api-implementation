@@ -37,21 +37,27 @@ class RsListControllerTests {
     private void setUp() {
         userService.deleteAll();
         rsEventService.deleteAll();
-        User user = new User("ricky", "male", 19, "a@b.com", "18888888888");
+        User user = User.builder()
+                .userName("ricky")
+                .age(19)
+                .email("a@b.com")
+                .gender("male")
+                .phone("18888888888")
+                .build();
         userService.addUser(user);
-        rsEventService.addRsEvent(new RsEvent("热搜来了", "热搜", user));
-        rsEventService.addRsEvent(new RsEvent("天气好热，没有空调", "难受", user));
+        rsEventService.addRsEvent(new RsEvent("热搜来了", "热搜", 1));
+        rsEventService.addRsEvent(new RsEvent("天气好热，没有空调", "难受", 1));
     }
 
     @Test
     public void should_get_rs_event() throws Exception {
         mockMvc.perform(get("/rs/1"))
                 .andExpect(jsonPath("$.eventName", is("热搜来了")))
-                .andExpect(jsonPath("$.keyWord", is("热搜")))
+                .andExpect(jsonPath("$.keyword", is("热搜")))
                 .andExpect(status().isOk());
         mockMvc.perform(get("/rs/2"))
                 .andExpect(jsonPath("$.eventName", is("天气好热，没有空调")))
-                .andExpect(jsonPath("$.keyWord", is("难受")))
+                .andExpect(jsonPath("$.keyword", is("难受")))
                 .andExpect(status().isOk());
     }
 
@@ -60,16 +66,22 @@ class RsListControllerTests {
         mockMvc.perform(get("/rs/list?start=1&end=2"))
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].eventName", is("热搜来了")))
-                .andExpect(jsonPath("$[0].keyWord", is("热搜")))
+                .andExpect(jsonPath("$[0].keyword", is("热搜")))
                 .andExpect(jsonPath("$[1].eventName", is("天气好热，没有空调")))
-                .andExpect(jsonPath("$[1].keyWord", is("难受")))
+                .andExpect(jsonPath("$[1].keyword", is("难受")))
                 .andExpect(status().isOk());
     }
 
     @Test
     public void should_add_rs_event() throws Exception {
-        User user = new User("ricky", "male", 19, "a@b.com", "18888888888");
-        RsEvent rsEvent = new RsEvent("超级热搜来了", "超级热搜", user);
+        User user = User.builder()
+                .userName("ricky")
+                .age(19)
+                .email("a@b.com")
+                .gender("male")
+                .phone("18888888888")
+                .build();
+        RsEvent rsEvent = new RsEvent("超级热搜来了", "超级热搜", 1);
         JsonMapper jsonMapper = new JsonMapper();
         jsonMapper.configure(MapperFeature.USE_ANNOTATIONS, false);
         String jsonString = jsonMapper.writeValueAsString(rsEvent);
@@ -79,11 +91,11 @@ class RsListControllerTests {
         mockMvc.perform(get("/rs/list"))
                 .andExpect(jsonPath("$", hasSize(3)))
                 .andExpect(jsonPath("$[0].eventName", is("热搜来了")))
-                .andExpect(jsonPath("$[0].keyWord", is("热搜")))
+                .andExpect(jsonPath("$[0].keyword", is("热搜")))
                 .andExpect(jsonPath("$[1].eventName", is("天气好热，没有空调")))
-                .andExpect(jsonPath("$[1].keyWord", is("难受")))
+                .andExpect(jsonPath("$[1].keyword", is("难受")))
                 .andExpect(jsonPath("$[2].eventName", is("超级热搜来了")))
-                .andExpect(jsonPath("$[2].keyWord", is("超级热搜")))
+                .andExpect(jsonPath("$[2].keyword", is("超级热搜")))
                 .andExpect(status().isOk());
     }
 
@@ -99,22 +111,22 @@ class RsListControllerTests {
         mockMvc.perform(get("/rs/list"))
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].eventName", is("热搜来了")))
-                .andExpect(jsonPath("$[0].keyWord", is("热搜")))
+                .andExpect(jsonPath("$[0].keyword", is("热搜")))
                 .andExpect(jsonPath("$[1].eventName", is("买了空调")))
-                .andExpect(jsonPath("$[1].keyWord", is("难受")))
+                .andExpect(jsonPath("$[1].keyword", is("难受")))
                 .andExpect(status().isOk());
 
         rsEvent = new RsEvent();
-        rsEvent.setKeyWord("舒服");
+        rsEvent.setKeyword("舒服");
         jsonString = jsonMapper.writeValueAsString(rsEvent);
         mockMvc.perform(patch("/rs/2").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
                 .andExpect(status().isOk());
         mockMvc.perform(get("/rs/list"))
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].eventName", is("热搜来了")))
-                .andExpect(jsonPath("$[0].keyWord", is("热搜")))
+                .andExpect(jsonPath("$[0].keyword", is("热搜")))
                 .andExpect(jsonPath("$[1].eventName", is("买了空调")))
-                .andExpect(jsonPath("$[1].keyWord", is("舒服")))
+                .andExpect(jsonPath("$[1].keyword", is("舒服")))
                 .andExpect(status().isOk());
     }
 
@@ -125,14 +137,13 @@ class RsListControllerTests {
         mockMvc.perform(get("/rs/list"))
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].eventName", is("热搜来了")))
-                .andExpect(jsonPath("$[0].keyWord", is("热搜")))
+                .andExpect(jsonPath("$[0].keyword", is("热搜")))
                 .andExpect(status().isOk());
     }
 
     @Test
     public void should_return_response_with_index_when_post_a_add_request() throws Exception {
-        User user = new User("ricky", "male", 19, "a@b.com", "18888888888");
-        RsEvent rsEvent = new RsEvent("超级热搜来了", "超级热搜", user);
+        RsEvent rsEvent = new RsEvent("超级热搜来了", "超级热搜", 1);
         JsonMapper jsonMapper = new JsonMapper();
         jsonMapper.configure(MapperFeature.USE_ANNOTATIONS, false);
         String jsonString = jsonMapper.writeValueAsString(rsEvent);

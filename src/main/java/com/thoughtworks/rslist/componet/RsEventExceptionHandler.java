@@ -3,6 +3,7 @@ package com.thoughtworks.rslist.componet;
 import com.thoughtworks.rslist.api.RsController;
 import com.thoughtworks.rslist.exception.Error;
 import com.thoughtworks.rslist.exception.RsEventNotValidException;
+import com.thoughtworks.rslist.exception.UserNotExistsException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -17,10 +18,16 @@ public class RsEventExceptionHandler {
     @ExceptionHandler({RsEventNotValidException.class, MethodArgumentNotValidException.class})
     public ResponseEntity rsEventNotValidExceptionHandler(Exception e) {
         Error error = new Error(e.getMessage());
-        System.out.println(e.getLocalizedMessage());
         if (e instanceof MethodArgumentNotValidException) {
             error.setError("invalid param");
         }
+        log.error(error.getError());
+        return ResponseEntity.badRequest().body(error);
+    }
+
+    @ExceptionHandler({UserNotExistsException.class})
+    public ResponseEntity userNotExistsExceptionHandler(UserNotExistsException e) {
+        Error error = new Error(e.getMessage());
         log.error(error.getError());
         return ResponseEntity.badRequest().body(error);
     }

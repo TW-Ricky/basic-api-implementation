@@ -7,7 +7,6 @@ import com.thoughtworks.rslist.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,10 +33,8 @@ public class UserServiceImpl implements UserService {
         return user;
     }
     @Override
-    public boolean checkUser(String userName) {
-        List<UserDTO> userList = userRepository.findAll();
-        long count = userList.stream().filter(it -> it.getName().equals(userName)).count();
-        return count > 0;
+    public boolean existsUserById(Integer id) {
+        return userRepository.existsById(id);
     }
 
     @Override

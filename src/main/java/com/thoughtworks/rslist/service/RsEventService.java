@@ -16,9 +16,9 @@ public interface RsEventService {
 
     Integer addRsEvent(RsEvent rsEvent);
 
-    void updateRsEventByIndex(Integer index, RsEvent rsEvent);
+    void updateRsEventById(Integer id, RsEvent rsEvent);
 
-    void deleteRsEventByIndex(Integer index);
+    void deleteRsEventById(Integer index);
 
     void deleteAll();
 
