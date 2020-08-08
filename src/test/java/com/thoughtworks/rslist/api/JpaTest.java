@@ -143,5 +143,15 @@ public class JpaTest {
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk());
     }
-
+    @Test
+    public void should_throw_user_not_exists_exception_when_add_rs_event() throws Exception {
+        RsEvent rsEvent = RsEvent.builder()
+                .eventName("超级热搜来了")
+                .keyword("超级热搜")
+                .userId(5)
+                .build();
+        String jsonString = jsonMapper.writeValueAsString(rsEvent);
+        mockMvc.perform(post("/rs/event").content(jsonString).characterEncoding("utf-8").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
 }
