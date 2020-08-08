@@ -8,7 +8,7 @@ public interface UserService {
 
     boolean checkUser(String userName);
 
-    void addUser(User user);
+    Integer addUser(User user);
 
     List<User> getUserList();
 

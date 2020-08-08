@@ -7,24 +7,24 @@ import javax.validation.constraints.*;
 public class User {
     @NotNull
     @Size(max = 8)
-    @JsonProperty("user_name")
+    // @JsonProperty("user_name")
     private String userName;
     @NotNull
-    @JsonProperty("user_gender")
+    // @JsonProperty("user_gender")
     private String gender;
     @NotNull
     @Min(18)
     @Max(100)
-    @JsonProperty("user_age")
+    // @JsonProperty("user_age")
     private int age;
     @Email
-    @JsonProperty("user_email")
+    // @JsonProperty("user_email")
     private String email;
     @NotNull
     @Pattern(regexp = "1\\w{10}")
-    @JsonProperty("user_phone")
+    // @JsonProperty("user_phone")
     private String phone;
-    @JsonProperty("user_vote_number")
+    // @JsonProperty("user_vote_number")
     private int voteNumber = 10;
 
     public User() {

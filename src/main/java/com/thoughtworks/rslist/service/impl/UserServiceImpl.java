@@ -7,6 +7,7 @@ import com.thoughtworks.rslist.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,8 +41,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void addUser(User user) {
-        userRepository.save(changeUserTOUserDTO(user));
+    public Integer addUser(User user) {
+        UserDTO userDTO = userRepository.save(changeUserTOUserDTO(user));
+        return userDTO.getId();
     }
 
     @Override
@@ -55,7 +57,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserById(int index) {
-        return null;
+        return changeUserDTOToUser(userRepository.findById(index).get());
     }
 
     @Override

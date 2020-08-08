@@ -10,12 +10,15 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.List;
 
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -43,5 +46,19 @@ public class JpaTest {
         List<User> userList = userService.getUserList();
         assertEquals(2, userList.size());
         assertEquals("xiaoli", userList.get(1).getUserName());
+    }
+
+    @Test
+    public void should_get_user_by_id() throws Exception {
+        User user = new User("xiaoli", "female", 19, "a@b.com", "18888888888");
+        JsonMapper jsonMapper = new JsonMapper();
+        String jsonString = jsonMapper.writeValueAsString(user);
+        MvcResult mvcResult = mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
+                .andExpect(status().isCreated()).andReturn();
+        System.out.println(mvcResult.getResponse().getContentAsString());
+        mockMvc.perform(get("/user/{index}", mvcResult.getResponse().getContentAsString()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.userName", is("xiaoli")))
+            .andExpect(jsonPath("$.gender", is("female")));
     }
 }

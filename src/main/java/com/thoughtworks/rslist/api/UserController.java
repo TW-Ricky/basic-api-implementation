@@ -15,14 +15,19 @@ public class UserController {
     UserService userService;
 
     @PostMapping("/user")
-    public ResponseEntity registerUser(@RequestBody @Valid User user) throws Exception {
-        userService.addUser(user);
-        return ResponseEntity.created(null).build();
+    public ResponseEntity<Integer> registerUser(@RequestBody @Valid User user) throws Exception {
+        Integer id = userService.addUser(user);
+        return ResponseEntity.created(null).body(id);
     }
 
     @GetMapping("/users")
     public ResponseEntity<List> getUserList() {
         return ResponseEntity.ok(userService.getUserList());
+    }
+
+    @GetMapping("/user/{index}")
+    public ResponseEntity<User> getUserById(@PathVariable int index) {
+        return ResponseEntity.ok(userService.getUserById(index));
     }
 
 }
