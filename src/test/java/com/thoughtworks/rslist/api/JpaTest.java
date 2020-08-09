@@ -84,10 +84,7 @@ public class JpaTest {
                 .gender("male")
                 .phone("18888888888")
                 .build();
-        String jsonString = jsonMapper.writeValueAsString(user);
-        String userId = mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
-                .andExpect(status().isCreated())
-                .andReturn().getResponse().getContentAsString();
+        Integer userId = userService.addUser(user);
         mockMvc.perform(get("/user/{index}", userId))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.userName", is("xiaoli")))
@@ -95,7 +92,7 @@ public class JpaTest {
     }
 
     @Test
-    public void should_delete_ser_by_id() throws Exception {
+    public void should_delete_user_by_id() throws Exception {
         User user = User.builder()
                 .userName("xiaoli")
                 .age(19)
@@ -103,10 +100,7 @@ public class JpaTest {
                 .gender("male")
                 .phone("18888888888")
                 .build();
-        String jsonString = jsonMapper.writeValueAsString(user);
-        String userId = mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
-                .andExpect(status().isCreated())
-                .andReturn().getResponse().getContentAsString();
+        Integer userId = userService.addUser(user);
 
         user = User.builder()
                 .userName("xiaobai")
@@ -115,9 +109,7 @@ public class JpaTest {
                 .gender("male")
                 .phone("18888888888")
                 .build();
-        jsonString = jsonMapper.writeValueAsString(user);
-        mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
-                .andExpect(status().isCreated());
+        userService.addUser(user);
         mockMvc.perform(delete("/user/{index}", userId))
                 .andExpect(status().isOk());
         mockMvc.perform(get("/users"))
@@ -153,5 +145,25 @@ public class JpaTest {
         String jsonString = jsonMapper.writeValueAsString(rsEvent);
         mockMvc.perform(post("/rs/event").content(jsonString).characterEncoding("utf-8").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
+    }
+    @Test
+    public void should_delete_rs_event_when_delete_user() throws Exception {
+        User user = User.builder()
+                .userName("xiaobai")
+                .age(19)
+                .email("a@b.com")
+                .gender("male")
+                .phone("18888888888")
+                .build();
+        Integer userId = userService.addUser(user);
+        RsEvent rsEvent = RsEvent.builder()
+                .eventName("热搜来了")
+                .keyword("热搜")
+                .userId(userId)
+                .build();
+        rsEventService.addRsEvent(rsEvent);
+        mockMvc.perform(delete("/user/{id}", userId)).andExpect(status().isOk());
+        assertEquals(1, userService.getUserList().size());
+        assertEquals(1, rsEventService.getRsEventList().size());
     }
 }
