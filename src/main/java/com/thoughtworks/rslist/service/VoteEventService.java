@@ -8,4 +8,6 @@ public interface VoteEventService {
     void voteRsEvent(Integer rsEventId, VoteEvent voteEvent);
 
     List<VoteEvent> getVoteEventList();
+
+    List<VoteEvent> getVoteRecord(Integer userId, Integer rsEventId);
 }

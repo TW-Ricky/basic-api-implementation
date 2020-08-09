@@ -78,4 +78,11 @@ public class VoteEventServiceImpl implements VoteEventService {
                 .voteTime(voteEvent.getVoteTime())
                 .build();
     }
+
+    @Override
+    public List<VoteEvent> getVoteRecord(Integer userId, Integer rsEventId) {
+        return voteEventRepository.findAccordingByUserIdAndRsEventId(userId, rsEventId).stream()
+                .map(item -> changeVoteEventDTOToVoteEvent(item))
+                .collect(Collectors.toList());
+    }
 }

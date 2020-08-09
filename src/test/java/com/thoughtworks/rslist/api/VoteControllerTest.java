@@ -20,8 +20,10 @@ import org.springframework.test.web.servlet.ResultMatcher;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -93,4 +95,22 @@ class VoteControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error", is("more votes than users own")));
     }
+
+    @Test
+    public void should_return_vote_record_by_user_id_and_rs_event_id() throws Exception {
+        VoteEvent voteEvent = VoteEvent.builder()
+                .voteNum(2)
+                .voteTime(LocalDateTime.now())
+                .userId(userId)
+                .build();
+        voteEventService.voteRsEvent(rsEventId, voteEvent);
+        mockMvc.perform(get("/voteRecord")
+                .param("userId", String.valueOf(userId))
+                .param("rsEventId", String.valueOf(rsEventId)))
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].userId", is(userId)))
+                .andExpect(jsonPath("$[0].rsEventId", is(rsEventId)))
+                .andExpect(jsonPath("$[0].voteNum", is(2)));
+    }
+
 }
