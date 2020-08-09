@@ -4,27 +4,28 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.apache.catalina.LifecycleState;
 
 import javax.persistence.*;
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "rs_event")
+@Table(name = "voteEvent")
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
-public class RsEventDTO {
+public class VoteEventDTO {
     @Id
     @GeneratedValue
     private int id;
-    private String eventName;
-    private String keyword;
     private Integer voteNum;
+    private LocalDateTime voteTime;
+
     @ManyToOne
+    @JoinColumn(name = "user_id")
     private UserDTO userDTO;
 
-    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "rsEventDTO")
-    private List<VoteEventDTO> voteEventDTOList;
+    @ManyToOne
+    @JoinColumn(name = "rs_event_id")
+    private RsEventDTO rsEventDTO;
 }

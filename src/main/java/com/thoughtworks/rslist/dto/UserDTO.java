@@ -1,5 +1,6 @@
 package com.thoughtworks.rslist.dto;
 
+import com.thoughtworks.rslist.domain.VoteEvent;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,4 +29,7 @@ public class UserDTO {
 
     @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "userDTO")
     private List<RsEventDTO> rsEventDTOList;
+
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "userDTO")
+    private List<VoteEventDTO> voteEventList;
 }

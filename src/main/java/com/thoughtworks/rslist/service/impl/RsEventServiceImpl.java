@@ -29,12 +29,14 @@ public class RsEventServiceImpl implements RsEventService {
                 .eventName(rsEventDTO.getEventName())
                 .keyword(rsEventDTO.getKeyword())
                 .userId(rsEventDTO.getUserDTO().getId())
+                .voteNum(rsEventDTO.getVoteNum())
                 .build();
     }
     private RsEventDTO changeRsEventToRsEventDTO(RsEvent rsEvent, UserDTO userDTO) {
         return RsEventDTO.builder()
                 .eventName(rsEvent.getEventName())
                 .keyword(rsEvent.getKeyword())
+                .voteNum(rsEvent.getVoteNum())
                 .userDTO(userDTO)
                 .build();
     }

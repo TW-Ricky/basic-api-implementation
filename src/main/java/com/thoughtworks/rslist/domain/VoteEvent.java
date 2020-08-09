@@ -1,24 +1,24 @@
 package com.thoughtworks.rslist.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 
-@Component
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RsEvent {
-    @NotNull
-    private String eventName;
-    @NotNull
-    private String keyword;
+@Builder
+public class VoteEvent {
+    private Integer rsEventId;
     @NotNull
     private Integer userId;
-    private Integer voteNum = 0;
+    @NotNull
+    private Integer voteNum;
+    @NotNull
+    private LocalDateTime voteTime;
 }

@@ -41,9 +41,9 @@ public class ErrorHandlingTest {
                 .gender("male")
                 .phone("18888888888")
                 .build();
-        userService.addUser(user);
-        rsEventService.addRsEvent(new RsEvent("热搜来了", "热搜", 1));
-        rsEventService.addRsEvent(new RsEvent("天气好热，没有空调", "难受", 1));
+        Integer userId = userService.addUser(user);
+        rsEventService.addRsEvent(RsEvent.builder().eventName("热搜来了").keyword("热搜").userId(userId).build());
+        rsEventService.addRsEvent(RsEvent.builder().eventName("天气好热，没有空调").keyword("难受").userId(userId).build());
     }
 
     @Test
@@ -69,7 +69,7 @@ public class ErrorHandlingTest {
                 .gender("male")
                 .phone("18888888888")
                 .build();
-        RsEvent rsEvent = new RsEvent(null, "测试", 1);
+        RsEvent rsEvent = RsEvent.builder().keyword("测试").userId(1).build();
         JsonMapper jsonMapper = new JsonMapper();
         jsonMapper.configure(MapperFeature.USE_ANNOTATIONS, false);
         String jsonString = jsonMapper.writeValueAsString(rsEvent);
