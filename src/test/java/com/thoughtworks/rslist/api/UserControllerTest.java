@@ -1,5 +1,6 @@
 package com.thoughtworks.rslist.api;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.thoughtworks.rslist.domain.User;
 import com.thoughtworks.rslist.service.UserService;
@@ -26,6 +27,8 @@ class UserControllerTest {
     MockMvc mockMvc;
     @Autowired
     private UserService userService;
+    @Autowired
+    ObjectMapper objectMapper;
 
     @BeforeEach
     private void setUp() {
@@ -48,8 +51,7 @@ class UserControllerTest {
                 .gender("male")
                 .phone("18888888888")
                 .build();
-        JsonMapper jsonMapper = new JsonMapper();
-        String jsonString = jsonMapper.writeValueAsString(user);
+        String jsonString = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
                 .andExpect(status().isCreated());
     }
@@ -63,8 +65,7 @@ class UserControllerTest {
                 .gender("male")
                 .phone("18888888888")
                 .build();
-        JsonMapper jsonMapper = new JsonMapper();
-        String jsonString = jsonMapper.writeValueAsString(user);
+        String jsonString = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
                 .andExpect(status().isBadRequest());
     }
@@ -77,8 +78,7 @@ class UserControllerTest {
                 .gender("male")
                 .phone("18888888888")
                 .build();
-        JsonMapper jsonMapper = new JsonMapper();
-        String jsonString = jsonMapper.writeValueAsString(user);
+        String jsonString = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
                 .andExpect(status().isBadRequest());
     }
@@ -91,8 +91,7 @@ class UserControllerTest {
                 .gender("male")
                 .phone("18888888888")
                 .build();
-        JsonMapper jsonMapper = new JsonMapper();
-        String jsonString = jsonMapper.writeValueAsString(user);
+        String jsonString = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
                 .andExpect(status().isBadRequest());
     }
@@ -105,8 +104,7 @@ class UserControllerTest {
                 .gender("male")
                 .phone("188888888881")
                 .build();
-        JsonMapper jsonMapper = new JsonMapper();
-        String jsonString = jsonMapper.writeValueAsString(user);
+        String jsonString = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
                 .andExpect(status().isBadRequest());
     }

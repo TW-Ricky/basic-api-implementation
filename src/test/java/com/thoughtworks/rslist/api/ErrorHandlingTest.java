@@ -1,6 +1,7 @@
 package com.thoughtworks.rslist.api;
 
 import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.thoughtworks.rslist.domain.RsEvent;
 import com.thoughtworks.rslist.domain.User;
@@ -29,6 +30,8 @@ public class ErrorHandlingTest {
     private RsEventService rsEventService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @BeforeEach
     private void init() {
@@ -44,6 +47,7 @@ public class ErrorHandlingTest {
         Integer userId = userService.addUser(user);
         rsEventService.addRsEvent(RsEvent.builder().eventName("热搜来了").keyword("热搜").userId(userId).build());
         rsEventService.addRsEvent(RsEvent.builder().eventName("天气好热，没有空调").keyword("难受").userId(userId).build());
+        objectMapper.configure(MapperFeature.USE_ANNOTATIONS, false);
     }
 
     @Test
@@ -70,9 +74,7 @@ public class ErrorHandlingTest {
                 .phone("18888888888")
                 .build();
         RsEvent rsEvent = RsEvent.builder().keyword("测试").userId(1).build();
-        JsonMapper jsonMapper = new JsonMapper();
-        jsonMapper.configure(MapperFeature.USE_ANNOTATIONS, false);
-        String jsonString = jsonMapper.writeValueAsString(rsEvent);
+        String jsonString = objectMapper.writeValueAsString(rsEvent);
         mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
                 .andExpect(jsonPath("error", is("invalid param")))
                 .andExpect(status().isBadRequest());
@@ -87,8 +89,7 @@ public class ErrorHandlingTest {
                 .gender("male")
                 .phone("18888888888")
                 .build();
-        JsonMapper jsonMapper = new JsonMapper();
-        String jsonString = jsonMapper.writeValueAsString(user);
+        String jsonString = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
                 .andExpect(jsonPath("error", is("invalid user")))
                 .andExpect(status().isBadRequest());

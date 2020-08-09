@@ -1,6 +1,7 @@
 package com.thoughtworks.rslist.api;
 
 import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.thoughtworks.rslist.domain.RsEvent;
 import com.thoughtworks.rslist.domain.User;
@@ -26,7 +27,8 @@ public class ValidationTest {
     private RsEventService rsEventService;
     @Autowired
     private UserService userService;
-    private JsonMapper jsonMapper;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @BeforeEach
     private void setUp() {
@@ -42,8 +44,7 @@ public class ValidationTest {
         userService.addUser(user);
         rsEventService.addRsEvent(RsEvent.builder().eventName("热搜来了").keyword("热搜").userId(1).build());
         rsEventService.addRsEvent(RsEvent.builder().eventName("天气好热，没有空调").keyword("难受").userId(1).build());
-        jsonMapper = new JsonMapper();
-        jsonMapper.configure(MapperFeature.USE_ANNOTATIONS, false);
+        objectMapper.configure(MapperFeature.USE_ANNOTATIONS, false);
     }
 
     @Test
@@ -56,7 +57,7 @@ public class ValidationTest {
                 .phone("18888888888")
                 .build();
         RsEvent rsEvent = RsEvent.builder().keyword("测试").userId(1).build();
-        String jsonString = jsonMapper.writeValueAsString(rsEvent);
+        String jsonString = objectMapper.writeValueAsString(rsEvent);
         mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
                 .andExpect(status().isBadRequest());
     }
@@ -71,7 +72,7 @@ public class ValidationTest {
                 .phone("18888888888")
                 .build();
         RsEvent rsEvent = RsEvent.builder().eventName("测试").userId(1).build();
-        String jsonString = jsonMapper.writeValueAsString(rsEvent);
+        String jsonString = objectMapper.writeValueAsString(rsEvent);
         mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
                 .andExpect(status().isBadRequest());
     }
@@ -79,7 +80,7 @@ public class ValidationTest {
     @Test
     public void should_not_add_rs_event_when_given_a_null_user() throws Exception {
         RsEvent rsEvent = RsEvent.builder().eventName("测试").keyword("测试").build();
-        String jsonString = jsonMapper.writeValueAsString(rsEvent);
+        String jsonString = objectMapper.writeValueAsString(rsEvent);
         mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
                 .andExpect(status().isBadRequest());
     }
@@ -93,7 +94,7 @@ public class ValidationTest {
                 .phone("18888888888")
                 .build();
         RsEvent rsEvent = RsEvent.builder().eventName("测试").keyword("测试").userId(1).build();
-        String jsonString = jsonMapper.writeValueAsString(rsEvent);
+        String jsonString = objectMapper.writeValueAsString(rsEvent);
         mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
                 .andExpect(status().isBadRequest());
     }
@@ -106,7 +107,7 @@ public class ValidationTest {
                 .phone("18888888888")
                 .build();
         RsEvent rsEvent = RsEvent.builder().eventName("测试").keyword("测试").userId(1).build();
-        String jsonString = jsonMapper.writeValueAsString(rsEvent);
+        String jsonString = objectMapper.writeValueAsString(rsEvent);
         mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
                 .andExpect(status().isBadRequest());
     }
@@ -119,7 +120,7 @@ public class ValidationTest {
                 .phone("18888888888")
                 .build();
         RsEvent rsEvent = RsEvent.builder().eventName("测试").keyword("测试").userId(1).build();
-        String jsonString = jsonMapper.writeValueAsString(rsEvent);
+        String jsonString = objectMapper.writeValueAsString(rsEvent);
         mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
                 .andExpect(status().isBadRequest());
     }
@@ -132,7 +133,7 @@ public class ValidationTest {
                 .gender("male")
                 .build();
         RsEvent rsEvent = RsEvent.builder().eventName("测试").keyword("测试").userId(1).build();
-        String jsonString = jsonMapper.writeValueAsString(rsEvent);
+        String jsonString = objectMapper.writeValueAsString(rsEvent);
         mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
                 .andExpect(status().isBadRequest());
     }
@@ -146,7 +147,7 @@ public class ValidationTest {
                 .phone("18888888888")
                 .build();
         RsEvent rsEvent = RsEvent.builder().eventName("测试").keyword("测试").userId(1).build();
-        String jsonString = jsonMapper.writeValueAsString(rsEvent);
+        String jsonString = objectMapper.writeValueAsString(rsEvent);
 
         mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
                 .andExpect(status().isBadRequest());
@@ -161,7 +162,7 @@ public class ValidationTest {
                 .phone("18888888888")
                 .build();
         RsEvent rsEvent = RsEvent.builder().eventName("测试").keyword("测试").userId(1).build();
-        String jsonString = jsonMapper.writeValueAsString(rsEvent);
+        String jsonString = objectMapper.writeValueAsString(rsEvent);
 
         mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
                 .andExpect(status().isBadRequest());
@@ -176,7 +177,7 @@ public class ValidationTest {
                 .phone("18888888888")
                 .build();
         RsEvent rsEvent = RsEvent.builder().eventName("测试").keyword("测试").userId(1).build();
-        String jsonString = jsonMapper.writeValueAsString(rsEvent);
+        String jsonString = objectMapper.writeValueAsString(rsEvent);
         mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
                 .andExpect(status().isBadRequest());
     }
@@ -190,7 +191,7 @@ public class ValidationTest {
                 .phone("188888888881")
                 .build();
         RsEvent rsEvent = RsEvent.builder().eventName("测试").keyword("测试").userId(1).build();
-        String jsonString = jsonMapper.writeValueAsString(rsEvent);
+        String jsonString = objectMapper.writeValueAsString(rsEvent);
         mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
                 .andExpect(status().isBadRequest());
     }

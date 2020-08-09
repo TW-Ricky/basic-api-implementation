@@ -26,6 +26,7 @@ public class RsEventServiceImpl implements RsEventService {
 
     private RsEvent changeRsEventDTOToRsEvent(RsEventDTO rsEventDTO) {
         return RsEvent.builder()
+                .id(rsEventDTO.getId())
                 .eventName(rsEventDTO.getEventName())
                 .keyword(rsEventDTO.getKeyword())
                 .userId(rsEventDTO.getUserDTO().getId())

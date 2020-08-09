@@ -1,5 +1,7 @@
 package com.thoughtworks.rslist.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,11 +16,21 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RsEvent {
+    private int id;
     @NotNull
     private String eventName;
     @NotNull
     private String keyword;
     @NotNull
     private Integer userId;
-    private Integer voteNum = 0;
+    private int voteNum = 0;
+
+    @JsonIgnore
+    public Integer getUserId() {
+        return userId;
+    }
+    @JsonProperty
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
 }
