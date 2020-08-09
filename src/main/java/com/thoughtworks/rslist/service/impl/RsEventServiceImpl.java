@@ -3,33 +3,39 @@ package com.thoughtworks.rslist.service.impl;
 import com.thoughtworks.rslist.domain.RsEvent;
 import com.thoughtworks.rslist.dto.RsEventDTO;
 import com.thoughtworks.rslist.dto.UserDTO;
+import com.thoughtworks.rslist.exception.RsEventNotExistsException;
 import com.thoughtworks.rslist.exception.RsEventNotValidException;
 import com.thoughtworks.rslist.exception.UserIdNotMatchException;
+import com.thoughtworks.rslist.exception.UserNotExistsException;
 import com.thoughtworks.rslist.repository.RsEventRepository;
+import com.thoughtworks.rslist.repository.UserRepository;
 import com.thoughtworks.rslist.service.RsEventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class RsEventServiceImpl implements RsEventService {
     @Autowired
     RsEventRepository rsEventRepository;
+    @Autowired
+    UserRepository userRepository;
 
     private RsEvent changeRsEventDTOToRsEvent(RsEventDTO rsEventDTO) {
         return RsEvent.builder()
                 .eventName(rsEventDTO.getEventName())
-                .keyword(rsEventDTO.getEventName())
+                .keyword(rsEventDTO.getKeyword())
                 .userId(rsEventDTO.getUserDTO().getId())
                 .build();
     }
-    private RsEventDTO changeRsEventToRsEventDTO(RsEvent rsEvent) {
+    private RsEventDTO changeRsEventToRsEventDTO(RsEvent rsEvent, UserDTO userDTO) {
         return RsEventDTO.builder()
                 .eventName(rsEvent.getEventName())
                 .keyword(rsEvent.getKeyword())
-                .userDTO(UserDTO.builder().id(rsEvent.getUserId()).build())
+                .userDTO(userDTO)
                 .build();
     }
     @Override
@@ -66,23 +72,31 @@ public class RsEventServiceImpl implements RsEventService {
 
     @Override
     public Integer addRsEvent(RsEvent rsEvent) {
-        RsEventDTO rsEventDTO = rsEventRepository.save(changeRsEventToRsEventDTO(rsEvent));
+        Optional<UserDTO> userDTO= userRepository.findById(rsEvent.getUserId());
+        if (!userDTO.isPresent()) {
+            throw new UserNotExistsException("user not exists");
+        }
+        RsEventDTO rsEventDTO = rsEventRepository.save(changeRsEventToRsEventDTO(rsEvent, userDTO.get()));
         return rsEventDTO.getId();
     }
 
     @Override
-    public void updateRsEventById(Integer id, RsEvent rsEvent) {
-        RsEventDTO rsEventDTO = rsEventRepository.findById(id).get();
-        if (!id.equals(rsEventDTO.getUserDTO().getId())) {
+    public void updateRsEventById(Integer id, RsEvent newRsEvent) {
+        Optional<RsEventDTO> rsEventDTO = rsEventRepository.findById(id);
+        if (!rsEventDTO.isPresent()) {
+            throw new RsEventNotExistsException("RsEvent not exists");
+        }
+        RsEventDTO newRsEventDTO= rsEventDTO.get();
+        if (!newRsEvent.getUserId().equals(newRsEventDTO.getUserDTO().getId())) {
             throw new UserIdNotMatchException("userId not match");
         }
-        if (rsEvent.getEventName() != null) {
-            rsEventDTO.setEventName(rsEvent.getEventName());
+        if (newRsEvent.getEventName() != null) {
+            newRsEventDTO.setEventName(newRsEvent.getEventName());
         }
-        if (rsEvent.getKeyword() != null) {
-            rsEventDTO.setKeyword(rsEvent.getKeyword());
+        if (newRsEvent.getKeyword() != null) {
+            newRsEventDTO.setKeyword(newRsEvent.getKeyword());
         }
-        rsEventRepository.save(rsEventDTO);
+        rsEventRepository.save(newRsEventDTO);
     }
 
     @Override

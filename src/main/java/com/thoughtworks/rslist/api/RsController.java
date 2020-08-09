@@ -1,7 +1,6 @@
 package com.thoughtworks.rslist.api;
 
 
-import com.thoughtworks.rslist.exception.UserNotExistsException;
 import com.thoughtworks.rslist.service.RsEventService;
 import com.thoughtworks.rslist.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +22,9 @@ public class RsController {
   @Autowired
   RsEventService rsEventService;
 
-  @GetMapping("/rs/{index}")
-  public ResponseEntity getRsEventList(@PathVariable int index) {
-    return ResponseEntity.ok(rsEventService.getRsEventById(index));
+  @GetMapping("/rs/{rsEventId}")
+  public ResponseEntity getRsEventList(@PathVariable Integer rsEventId) {
+    return ResponseEntity.ok(rsEventService.getRsEventById(rsEventId));
   }
 
   @GetMapping("/rs/list")
@@ -37,9 +36,6 @@ public class RsController {
 
   @PostMapping("/rs/event")
   private ResponseEntity addRsEvent(@RequestBody @Valid RsEvent rsEvent) {
-    if (!userService.existsUserById(rsEvent.getUserId())) {
-      throw new UserNotExistsException("user not exists");
-    }
     String id = String.valueOf(rsEventService.addRsEvent(rsEvent));
     return ResponseEntity.created(null).header("id", id).build();
   }
@@ -50,9 +46,9 @@ public class RsController {
     return ResponseEntity.ok().build();
   }
 
-  @DeleteMapping("/rs/{index}")
-  private ResponseEntity deleteRsEvent(@PathVariable Integer index) {
-    rsEventService.deleteRsEventById(index);
+  @DeleteMapping("/rs/{rsEventId}")
+  private ResponseEntity deleteRsEvent(@PathVariable Integer rsEventId) {
+    rsEventService.deleteRsEventById(rsEventId);
     return ResponseEntity.ok().build();
   }
 }
