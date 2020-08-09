@@ -86,7 +86,7 @@ public class RsEventServiceImpl implements RsEventService {
     public void updateRsEventById(Integer id, RsEvent newRsEvent) {
         Optional<RsEventDTO> rsEventDTO = rsEventRepository.findById(id);
         if (!rsEventDTO.isPresent()) {
-            throw new RsEventNotExistsException("RsEvent not exists");
+            throw new RsEventNotExistsException("rsEvent not exists");
         }
         RsEventDTO newRsEventDTO= rsEventDTO.get();
         if (!newRsEvent.getUserId().equals(newRsEventDTO.getUserDTO().getId())) {

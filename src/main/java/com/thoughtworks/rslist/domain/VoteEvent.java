@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
@@ -18,6 +19,7 @@ public class VoteEvent {
     @NotNull
     private Integer userId;
     @NotNull
+    @Min(0)
     private Integer voteNum;
     @NotNull
     private LocalDateTime voteTime;
