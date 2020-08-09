@@ -12,6 +12,8 @@ import com.thoughtworks.rslist.repository.UserRepository;
 import com.thoughtworks.rslist.repository.VoteEventRepository;
 import com.thoughtworks.rslist.service.VoteEventService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -80,8 +82,9 @@ public class VoteEventServiceImpl implements VoteEventService {
     }
 
     @Override
-    public List<VoteEvent> getVoteRecord(Integer userId, Integer rsEventId) {
-        return voteEventRepository.findAccordingByUserIdAndRsEventId(userId, rsEventId).stream()
+    public List<VoteEvent> getVoteRecord(Integer userId, Integer rsEventId, Integer pageIndex) {
+        Pageable pageable = PageRequest.of(pageIndex - 1, 5);
+        return voteEventRepository.findAccordingByUserIdAndRsEventId(userId, rsEventId, pageable).stream()
                 .map(item -> changeVoteEventDTOToVoteEvent(item))
                 .collect(Collectors.toList());
     }

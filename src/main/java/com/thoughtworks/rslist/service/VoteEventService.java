@@ -9,5 +9,5 @@ public interface VoteEventService {
 
     List<VoteEvent> getVoteEventList();
 
-    List<VoteEvent> getVoteRecord(Integer userId, Integer rsEventId);
+    List<VoteEvent> getVoteRecord(Integer userId, Integer rsEventId, Integer pageIndex);
 }
