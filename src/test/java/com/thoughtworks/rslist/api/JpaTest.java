@@ -179,9 +179,13 @@ public class JpaTest {
         RsEvent rsEvent = RsEvent.builder()
                 .eventName("超级热搜来了")
                 .keyword("超级热搜")
-                .userId(userId - 1)
+                .userId(userId)
                 .build();
         Integer rsEventId = rsEventService.addRsEvent(rsEvent);
-        mockMvc.perform(patch("/rs/{id}", rsEventId)).andExpect(status().isBadRequest());
+        rsEvent.setUserId(userId - 1);
+        String jsonString = jsonMapper.writeValueAsString(rsEvent);
+        mockMvc.perform(patch("/rs/{id}", rsEventId).content(jsonString).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.error", is("userId not match")))
+                .andExpect(status().isBadRequest());
     }
 }

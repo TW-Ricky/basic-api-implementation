@@ -27,7 +27,7 @@ public class RsEventExceptionHandler {
     }
 
     @ExceptionHandler({UserNotExistsException.class, UserIdNotMatchException.class})
-    public ResponseEntity userNotExistsExceptionHandler(UserNotExistsException e) {
+    public ResponseEntity userNotExistsExceptionHandler(Exception e) {
         Error error = new Error(e.getMessage());
         log.error(error.getError());
         return ResponseEntity.badRequest().body(error);

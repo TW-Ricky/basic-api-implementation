@@ -2,6 +2,7 @@ package com.thoughtworks.rslist.service.impl;
 
 import com.thoughtworks.rslist.domain.RsEvent;
 import com.thoughtworks.rslist.dto.RsEventDTO;
+import com.thoughtworks.rslist.dto.UserDTO;
 import com.thoughtworks.rslist.exception.RsEventNotValidException;
 import com.thoughtworks.rslist.exception.UserIdNotMatchException;
 import com.thoughtworks.rslist.repository.RsEventRepository;
@@ -28,6 +29,7 @@ public class RsEventServiceImpl implements RsEventService {
         return RsEventDTO.builder()
                 .eventName(rsEvent.getEventName())
                 .keyword(rsEvent.getKeyword())
+                .userDTO(UserDTO.builder().id(rsEvent.getUserId()).build())
                 .build();
     }
     @Override
@@ -71,7 +73,7 @@ public class RsEventServiceImpl implements RsEventService {
     @Override
     public void updateRsEventById(Integer id, RsEvent rsEvent) {
         RsEventDTO rsEventDTO = rsEventRepository.findById(id).get();
-        if (rsEventDTO.getUserDTO().getId() != id) {
+        if (!id.equals(rsEventDTO.getUserDTO().getId())) {
             throw new UserIdNotMatchException("userId not match");
         }
         if (rsEvent.getEventName() != null) {
