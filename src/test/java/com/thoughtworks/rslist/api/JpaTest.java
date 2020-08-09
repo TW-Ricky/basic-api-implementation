@@ -236,4 +236,29 @@ public class JpaTest {
         assertEquals("超级热搜来了", newRsEvent.getEventName());
         assertEquals("修改后的超级热搜", newRsEvent.getKeyword());
     }
+    @Test
+    public void should_update_event_name_and_keyword_when_user_id_match() throws Exception {
+        User user = User.builder()
+                .userName("xiaobai")
+                .age(19)
+                .email("a@b.com")
+                .gender("male")
+                .phone("18888888888")
+                .build();
+        Integer userId = userService.addUser(user);
+        RsEvent rsEvent = RsEvent.builder()
+                .eventName("超级热搜来了")
+                .keyword("超级热搜")
+                .userId(userId)
+                .build();
+        Integer rsEventId = rsEventService.addRsEvent(rsEvent);
+        rsEvent.setKeyword("修改后的超级热搜");
+        rsEvent.setEventName("修改后的超级热搜来了");
+        String jsonString = jsonMapper.writeValueAsString(rsEvent);
+        mockMvc.perform(patch("/rs/{rsEventId}", rsEventId).content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
+                .andExpect(status().isOk());
+        RsEvent newRsEvent = rsEventService.getRsEventById(rsEventId);
+        assertEquals("修改后的超级热搜来了", newRsEvent.getEventName());
+        assertEquals("修改后的超级热搜", newRsEvent.getKeyword());
+    }
 }
