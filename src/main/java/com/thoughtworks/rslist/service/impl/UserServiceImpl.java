@@ -2,13 +2,15 @@ package com.thoughtworks.rslist.service.impl;
 
 import com.thoughtworks.rslist.domain.User;
 import com.thoughtworks.rslist.dto.UserDTO;
+import com.thoughtworks.rslist.exception.UserNotExistsException;
 import com.thoughtworks.rslist.repository.UserRepository;
 import com.thoughtworks.rslist.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -17,20 +19,23 @@ public class UserServiceImpl implements UserService {
     UserRepository userRepository;
 
     private UserDTO changeUserTOUserDTO(User user){
-        return UserDTO.builder().age(user.getAge()).email(user.getEmail())
-                .gender(user.getGender()).name(user.getUserName()).phone(user.getPhone())
-                .voteNum(user.getVoteNumber()).build();
+        return UserDTO.builder().age(user.getAge())
+                .email(user.getEmail())
+                .gender(user.getGender())
+                .name(user.getUserName())
+                .phone(user.getPhone())
+                .voteNum(user.getVoteNumber())
+                .build();
     }
 
     private User changeUserDTOToUser(UserDTO userDTO) {
-        User user = new User();
-        user.setUserName(userDTO.getName());
-        user.setGender(userDTO.getGender());
-        user.setPhone(userDTO.getPhone());
-        user.setEmail(userDTO.getEmail());
-        user.setAge(userDTO.getAge());
-        user.setVoteNumber(userDTO.getVoteNum());
-        return user;
+        return User.builder().voteNumber(userDTO.getVoteNum())
+                .age(userDTO.getAge())
+                .email(userDTO.getEmail())
+                .gender(userDTO.getGender())
+                .phone(userDTO.getPhone())
+                .userName(userDTO.getName())
+                .build();
     }
     @Override
     public boolean existsUserById(Integer id) {
@@ -45,16 +50,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> getUserList() {
-        List<UserDTO> userDTOList = userRepository.findAll();
-        List<User> userList = new ArrayList<>();
-        userDTOList.stream().forEach(item -> userList.add(changeUserDTOToUser(item)));
-        return userList;
+        return userRepository.findAll().stream()
+                .map(item -> changeUserDTOToUser(item))
+                .collect(Collectors.toList());
     }
 
 
     @Override
-    public User getUserById(int index) {
-        return changeUserDTOToUser(userRepository.findById(index).get());
+    public User getUserById(Integer id) {
+        Optional<UserDTO> userDTOOptional = userRepository.findById(id);
+        if (!userDTOOptional.isPresent()) {
+            throw new UserNotExistsException("user not exists");
+        }
+        return changeUserDTOToUser(userDTOOptional.get());
     }
 
     @Override
@@ -63,7 +71,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUserById(int id) {
+    public void deleteUserById(Integer id) {
         userRepository.deleteById(id);
     }
 }

@@ -12,9 +12,9 @@ public interface UserService {
 
     List<User> getUserList();
 
-    User getUserById(int index);
+    User getUserById(Integer index);
 
     void deleteAll();
 
-    void deleteUserById(int index);
+    void deleteUserById(Integer index);
 }

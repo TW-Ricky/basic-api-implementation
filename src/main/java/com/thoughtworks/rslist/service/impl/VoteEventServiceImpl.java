@@ -57,7 +57,8 @@ public class VoteEventServiceImpl implements VoteEventService {
     @Override
     public List<VoteEvent> getVoteEventList() {
         return voteEventRepository.findAll().stream()
-                .map(item -> changeVoteEventDTOToVoteEvent(item)).collect(Collectors.toList());
+                .map(item -> changeVoteEventDTOToVoteEvent(item))
+                .collect(Collectors.toList());
     }
 
     private VoteEvent changeVoteEventDTOToVoteEvent(VoteEventDTO voteEventDTO) {

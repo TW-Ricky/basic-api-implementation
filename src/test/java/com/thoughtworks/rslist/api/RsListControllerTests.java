@@ -1,6 +1,7 @@
 package com.thoughtworks.rslist.api;
 
 import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.thoughtworks.rslist.domain.RsEvent;
 import com.thoughtworks.rslist.domain.User;
@@ -33,6 +34,12 @@ class RsListControllerTests {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    ObjectMapper objectMapper;
+    Integer userId;
+    Integer firstRsEventId;
+    Integer secondRsEventId;
+
     @BeforeEach
     private void setUp() {
         userService.deleteAll();
@@ -44,18 +51,19 @@ class RsListControllerTests {
                 .gender("male")
                 .phone("18888888888")
                 .build();
-        Integer userId = userService.addUser(user);
-        rsEventService.addRsEvent(RsEvent.builder().eventName("热搜来了").keyword("热搜").userId(userId).build());
-        rsEventService.addRsEvent(RsEvent.builder().eventName("天气好热，没有空调").keyword("难受").userId(userId).build());
+        userId = userService.addUser(user);
+        firstRsEventId = rsEventService.addRsEvent(RsEvent.builder().eventName("热搜来了").keyword("热搜").userId(userId).build());
+        secondRsEventId = rsEventService.addRsEvent(RsEvent.builder().eventName("天气好热，没有空调").keyword("难受").userId(userId).build());
+        objectMapper.configure(MapperFeature.USE_ANNOTATIONS, false);
     }
 
     @Test
     public void should_get_rs_event() throws Exception {
-        mockMvc.perform(get("/rs/1"))
+        mockMvc.perform(get("/rs/{id}", firstRsEventId))
                 .andExpect(jsonPath("$.eventName", is("热搜来了")))
                 .andExpect(jsonPath("$.keyword", is("热搜")))
                 .andExpect(status().isOk());
-        mockMvc.perform(get("/rs/2"))
+        mockMvc.perform(get("/rs/{id}", secondRsEventId))
                 .andExpect(jsonPath("$.eventName", is("天气好热，没有空调")))
                 .andExpect(jsonPath("$.keyword", is("难受")))
                 .andExpect(status().isOk());
@@ -81,11 +89,8 @@ class RsListControllerTests {
                 .gender("male")
                 .phone("18888888888")
                 .build();
-        RsEvent rsEvent = RsEvent.builder().eventName("超级热搜来了").keyword("超级热搜").userId(1).build();
-        JsonMapper jsonMapper = new JsonMapper();
-        jsonMapper.configure(MapperFeature.USE_ANNOTATIONS, false);
-        String jsonString = jsonMapper.writeValueAsString(rsEvent);
-
+        RsEvent rsEvent = RsEvent.builder().eventName("超级热搜来了").keyword("超级热搜").userId(userId).build();
+        String jsonString = objectMapper.writeValueAsString(rsEvent);
         mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
                 .andExpect(status().isCreated());
         mockMvc.perform(get("/rs/list"))
@@ -101,12 +106,9 @@ class RsListControllerTests {
 
     @Test
     public void should_patch_rs_event() throws Exception {
-        RsEvent rsEvent = new RsEvent();
-        rsEvent.setEventName("买了空调");
-        JsonMapper jsonMapper = new JsonMapper();
-        jsonMapper.configure(MapperFeature.USE_ANNOTATIONS, false);
-        String jsonString = jsonMapper.writeValueAsString(rsEvent);
-        mockMvc.perform(patch("/rs/2").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
+        RsEvent rsEvent = RsEvent.builder().eventName("买了空调").userId(userId).build();
+        String jsonString = objectMapper.writeValueAsString(rsEvent);
+        mockMvc.perform(patch("/rs/{id}", secondRsEventId).content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
                 .andExpect(status().isOk());
         mockMvc.perform(get("/rs/list"))
                 .andExpect(jsonPath("$", hasSize(2)))
@@ -116,10 +118,9 @@ class RsListControllerTests {
                 .andExpect(jsonPath("$[1].keyword", is("难受")))
                 .andExpect(status().isOk());
 
-        rsEvent = new RsEvent();
-        rsEvent.setKeyword("舒服");
-        jsonString = jsonMapper.writeValueAsString(rsEvent);
-        mockMvc.perform(patch("/rs/2").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
+        rsEvent = RsEvent.builder().keyword("舒服").userId(userId).build();
+        jsonString = objectMapper.writeValueAsString(rsEvent);
+        mockMvc.perform(patch("/rs/{id}", secondRsEventId).content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
                 .andExpect(status().isOk());
         mockMvc.perform(get("/rs/list"))
                 .andExpect(jsonPath("$", hasSize(2)))
@@ -132,7 +133,7 @@ class RsListControllerTests {
 
     @Test
     public void should_delete_rs_event() throws Exception {
-        mockMvc.perform(delete("/rs/2"))
+        mockMvc.perform(delete("/rs/{id}", secondRsEventId))
                 .andExpect(status().isOk());
         mockMvc.perform(get("/rs/list"))
                 .andExpect(jsonPath("$", hasSize(1)))
@@ -143,15 +144,12 @@ class RsListControllerTests {
 
     @Test
     public void should_return_response_with_index_when_post_a_add_request() throws Exception {
-        RsEvent rsEvent = RsEvent.builder().eventName("超级热搜来了").keyword("超级热搜").userId(1).build();
-        JsonMapper jsonMapper = new JsonMapper();
-        jsonMapper.configure(MapperFeature.USE_ANNOTATIONS, false);
-        String jsonString = jsonMapper.writeValueAsString(rsEvent);
-
+        RsEvent newRsEvent = RsEvent.builder().eventName("超级热搜来了").keyword("超级热搜").userId(userId).build();
+        String jsonString = objectMapper.writeValueAsString(newRsEvent);
         MvcResult result = mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
                 .andDo(print())
                 .andExpect(status().isCreated())
-                .andExpect(header().exists("index"))
+                .andExpect(header().exists("rsEventId"))
                 .andReturn();
     }
 

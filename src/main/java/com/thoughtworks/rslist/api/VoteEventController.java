@@ -19,7 +19,6 @@ public class VoteEventController {
     @PostMapping("/rs/vote/{rsEventId}")
     public ResponseEntity voteRsEvent(@PathVariable Integer rsEventId,
                                       @RequestBody @Valid VoteEvent voteEvent) {
-        System.out.println(voteEvent);
         voteEventService.voteRsEvent(rsEventId, voteEvent);
         return ResponseEntity.ok().build();
     }

@@ -28,16 +28,15 @@ public class RsController {
   }
 
   @GetMapping("/rs/list")
-  private ResponseEntity getRsListBetween(@RequestParam(required = false) Integer start
-          ,@RequestParam(required = false) Integer end) {
-
+  private ResponseEntity getRsListBetween(@RequestParam(required = false) Integer start,
+                                          @RequestParam(required = false) Integer end) {
     return ResponseEntity.ok(rsEventService.subRsEventList(start, end));
   }
 
   @PostMapping("/rs/event")
   private ResponseEntity addRsEvent(@RequestBody @Valid RsEvent rsEvent) {
-    String id = String.valueOf(rsEventService.addRsEvent(rsEvent));
-    return ResponseEntity.created(null).header("id", id).build();
+    String rsEventId = String.valueOf(rsEventService.addRsEvent(rsEvent));
+    return ResponseEntity.created(null).header("rsEventId", rsEventId).build();
   }
 
   @PatchMapping("/rs/{rsEventId}")
