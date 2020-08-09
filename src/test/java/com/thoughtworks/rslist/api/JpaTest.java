@@ -81,7 +81,7 @@ public class JpaTest {
                 .userName("xiaoli")
                 .age(19)
                 .email("a@b.com")
-                .gender("male")
+                .gender("female")
                 .phone("18888888888")
                 .build();
         Integer userId = userService.addUser(user);
@@ -120,10 +120,18 @@ public class JpaTest {
     }
     @Test
     public void should_add_rs_event_into_mysql() throws Exception {
+        User user = User.builder()
+                .userName("xiaobai")
+                .age(19)
+                .email("a@b.com")
+                .gender("male")
+                .phone("18888888888")
+                .build();
+        Integer userId = userService.addUser(user);
         RsEvent rsEvent = RsEvent.builder()
                 .eventName("超级热搜来了")
                 .keyword("超级热搜")
-                .userId(1)
+                .userId(userId)
                 .build();
         String jsonString = jsonMapper.writeValueAsString(rsEvent);
         mockMvc.perform(post("/rs/event").content(jsonString).characterEncoding("utf-8").contentType(MediaType.APPLICATION_JSON))
