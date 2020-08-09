@@ -3,6 +3,7 @@ package com.thoughtworks.rslist.componet;
 import com.thoughtworks.rslist.api.RsController;
 import com.thoughtworks.rslist.exception.Error;
 import com.thoughtworks.rslist.exception.RsEventNotValidException;
+import com.thoughtworks.rslist.exception.UserIdNotMatchException;
 import com.thoughtworks.rslist.exception.UserNotExistsException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +26,7 @@ public class RsEventExceptionHandler {
         return ResponseEntity.badRequest().body(error);
     }
 
-    @ExceptionHandler({UserNotExistsException.class})
+    @ExceptionHandler({UserNotExistsException.class, UserIdNotMatchException.class})
     public ResponseEntity userNotExistsExceptionHandler(UserNotExistsException e) {
         Error error = new Error(e.getMessage());
         log.error(error.getError());

@@ -3,6 +3,7 @@ package com.thoughtworks.rslist.service.impl;
 import com.thoughtworks.rslist.domain.RsEvent;
 import com.thoughtworks.rslist.dto.RsEventDTO;
 import com.thoughtworks.rslist.exception.RsEventNotValidException;
+import com.thoughtworks.rslist.exception.UserIdNotMatchException;
 import com.thoughtworks.rslist.repository.RsEventRepository;
 import com.thoughtworks.rslist.service.RsEventService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,14 +21,13 @@ public class RsEventServiceImpl implements RsEventService {
         return RsEvent.builder()
                 .eventName(rsEventDTO.getEventName())
                 .keyword(rsEventDTO.getEventName())
-                .userId(rsEventDTO.getUserId())
+                .userId(rsEventDTO.getUserDTO().getId())
                 .build();
     }
     private RsEventDTO changeRsEventToRsEventDTO(RsEvent rsEvent) {
         return RsEventDTO.builder()
                 .eventName(rsEvent.getEventName())
                 .keyword(rsEvent.getKeyword())
-                .userId(rsEvent.getUserId())
                 .build();
     }
     @Override
@@ -38,7 +38,7 @@ public class RsEventServiceImpl implements RsEventService {
     }
 
     @Override
-    public RsEvent getRsEventByIndex(Integer id) {
+    public RsEvent getRsEventById(Integer id) {
         if (!rsEventRepository.existsById(id)) {
             throw new RsEventNotValidException("invalid index");
         }
@@ -71,6 +71,9 @@ public class RsEventServiceImpl implements RsEventService {
     @Override
     public void updateRsEventById(Integer id, RsEvent rsEvent) {
         RsEventDTO rsEventDTO = rsEventRepository.findById(id).get();
+        if (rsEventDTO.getUserDTO().getId() != id) {
+            throw new UserIdNotMatchException("userId not match");
+        }
         if (rsEvent.getEventName() != null) {
             rsEventDTO.setEventName(rsEvent.getEventName());
         }

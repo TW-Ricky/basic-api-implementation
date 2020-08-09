@@ -10,7 +10,7 @@ import java.util.List;
 public interface RsEventService {
     List<RsEvent> getRsEventList();
 
-    RsEvent getRsEventByIndex(Integer index);
+    RsEvent getRsEventById(Integer index);
 
     List<RsEvent> subRsEventList(Integer start, Integer end);
 

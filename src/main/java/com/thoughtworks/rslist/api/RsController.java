@@ -25,7 +25,7 @@ public class RsController {
 
   @GetMapping("/rs/{index}")
   public ResponseEntity getRsEventList(@PathVariable int index) {
-    return ResponseEntity.ok(rsEventService.getRsEventByIndex(index));
+    return ResponseEntity.ok(rsEventService.getRsEventById(index));
   }
 
   @GetMapping("/rs/list")
@@ -44,9 +44,9 @@ public class RsController {
     return ResponseEntity.created(null).header("id", id).build();
   }
 
-  @PatchMapping("/rs/{index}")
-  private ResponseEntity updateRsEvent(@PathVariable Integer index, @RequestBody RsEvent rsEvent) {
-    rsEventService.updateRsEventById(index, rsEvent);
+  @PatchMapping("/rs/{rsEventId}")
+  private ResponseEntity updateRsEvent(@PathVariable Integer rsEventId, @RequestBody RsEvent newRsEvent) {
+    rsEventService.updateRsEventById(rsEventId, newRsEvent);
     return ResponseEntity.ok().build();
   }
 

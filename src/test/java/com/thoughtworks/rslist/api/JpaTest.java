@@ -157,13 +157,31 @@ public class JpaTest {
                 .build();
         Integer userId = userService.addUser(user);
         RsEvent rsEvent = RsEvent.builder()
-                .eventName("热搜来了")
-                .keyword("热搜")
+                .eventName("超级热搜来了")
+                .keyword("超级热搜")
                 .userId(userId)
                 .build();
         rsEventService.addRsEvent(rsEvent);
         mockMvc.perform(delete("/user/{id}", userId)).andExpect(status().isOk());
         assertEquals(1, userService.getUserList().size());
         assertEquals(1, rsEventService.getRsEventList().size());
+    }
+    @Test
+    public void should_throw_exception_when_user_id_not_match() throws Exception {
+        User user = User.builder()
+                .userName("xiaobai")
+                .age(19)
+                .email("a@b.com")
+                .gender("male")
+                .phone("18888888888")
+                .build();
+        Integer userId = userService.addUser(user);
+        RsEvent rsEvent = RsEvent.builder()
+                .eventName("超级热搜来了")
+                .keyword("超级热搜")
+                .userId(userId - 1)
+                .build();
+        Integer rsEventId = rsEventService.addRsEvent(rsEvent);
+        mockMvc.perform(patch("/rs/{id}", rsEventId)).andExpect(status().isBadRequest());
     }
 }
