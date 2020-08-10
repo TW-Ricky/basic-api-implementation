@@ -25,9 +25,9 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserList());
     }
 
-    @GetMapping("/user/{index}")
-    public ResponseEntity<User> getUserById(@PathVariable int index) {
-        return ResponseEntity.ok(userService.getUserById(index));
+    @GetMapping("/user/{id}")
+    public ResponseEntity<User> getUserById(@PathVariable int id) {
+        return ResponseEntity.ok(userService.getUserById(id));
     }
 
     @DeleteMapping("/user/{id}")

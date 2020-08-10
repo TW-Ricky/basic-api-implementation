@@ -78,7 +78,7 @@ class VoteControllerTest {
                 .userId(userId)
                 .build();
         String jsonString = objectMapper.writeValueAsString(voteEvent);
-        mockMvc.perform(post("/rs/vote/{rsEventId}", rsEventId).content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
+        mockMvc.perform(post("/rs/{rsEventId}/vote", rsEventId).content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
                 .andExpect(status().isOk());
         RsEvent newRsEvent = rsEventService.getRsEventById(rsEventId);
         User newUser = userService.getUserById(userId);
@@ -95,7 +95,7 @@ class VoteControllerTest {
                 .userId(userId)
                 .build();
         String jsonString = objectMapper.writeValueAsString(voteEvent);
-        mockMvc.perform(post("/rs/vote/{rsEventId}", rsEventId).content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
+        mockMvc.perform(post("/rs/{rsEventId}/vote", rsEventId).content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error", is("more votes than users own")));
     }

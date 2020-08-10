@@ -24,7 +24,7 @@ public class VoteEventController {
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    @PostMapping("/rs/vote/{rsEventId}")
+    @PostMapping("/rs/{rsEventId}/vote")
     public ResponseEntity voteRsEvent(@PathVariable Integer rsEventId,
                                       @RequestBody @Valid VoteEvent voteEvent) {
         voteEventService.voteRsEvent(rsEventId, voteEvent);
