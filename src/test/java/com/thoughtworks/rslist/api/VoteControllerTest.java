@@ -49,7 +49,10 @@ class VoteControllerTest {
 
     @BeforeEach
     void setUp() {
-         user = User.builder()
+        voteEventService.deleteAll();
+        userService.deleteAll();
+        rsEventService.deleteAll();
+        user = User.builder()
                 .userName("xiaobai")
                 .age(19)
                 .email("a@b.com")
@@ -87,7 +90,7 @@ class VoteControllerTest {
     @Test
     public void should_throw_exception_when_vote_rs_event_given_over_user_voteNumber() throws Exception {
         VoteEvent voteEvent = VoteEvent.builder()
-                .voteNum(15)
+                .voteNum(105)
                 .voteTime(LocalDateTime.now())
                 .userId(userId)
                 .build();
@@ -148,8 +151,9 @@ class VoteControllerTest {
         LocalDateTime end = LocalDateTime.of(2020, 5,25, 12,0, 0);
         String startTime = objectMapper.writeValueAsString(start).replaceAll("\"", "");
         String endTime = objectMapper.writeValueAsString(end).replaceAll("\"", "");
-        mockMvc.perform(get("/voteRecordByTime")
+        mockMvc.perform(get("/voteRecord")
                 .param("startTime", startTime)
+                .param("pageIndex", String.valueOf(1))
                 .param("endTime", endTime))
                 .andExpect(jsonPath("$", hasSize(5)))
                 .andExpect(jsonPath("$[0].userId", is(userId)))

@@ -12,5 +12,7 @@ public interface VoteEventService {
 
     List<VoteEvent> getVoteRecord(Integer userId, Integer rsEventId, Integer pageIndex);
 
-    List<VoteEvent> getVoteRecordByTime(LocalDateTime startTime, LocalDateTime endTime);
+    List<VoteEvent> getVoteRecordByTime(LocalDateTime startTime, LocalDateTime endTime, Integer pageIndex);
+
+    void deleteAll();
 }

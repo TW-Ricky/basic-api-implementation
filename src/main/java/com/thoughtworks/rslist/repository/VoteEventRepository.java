@@ -19,5 +19,5 @@ public interface VoteEventRepository extends PagingAndSortingRepository<VoteEven
     List<VoteEventDTO> findAccordingByUserIdAndRsEventId(int userId, int rsEventId, Pageable pageable);
 
     @Query("select v from VoteEventDTO v where v.voteTime between :startTime and :endTime")
-    List<VoteEventDTO> findAccordingBetweenStartTimeAndEndTime(LocalDateTime startTime, LocalDateTime endTime);
+    List<VoteEventDTO> findAccordingBetweenStartTimeAndEndTime(LocalDateTime startTime, LocalDateTime endTime, Pageable pageable);
 }

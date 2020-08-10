@@ -92,12 +92,19 @@ public class VoteEventServiceImpl implements VoteEventService {
     }
 
     @Override
-    public List<VoteEvent> getVoteRecordByTime(LocalDateTime startTime, LocalDateTime endTime) {
+    public List<VoteEvent> getVoteRecordByTime(LocalDateTime startTime, LocalDateTime endTime, Integer pageIndex) {
         if (startTime.isAfter(endTime)) {
             throw new TimeErrorException("startTime after than endTime");
         }
-        return voteEventRepository.findAccordingBetweenStartTimeAndEndTime(startTime, endTime).stream()
+
+        Pageable pageable = PageRequest.of(pageIndex - 1, 5);
+        return voteEventRepository.findAccordingBetweenStartTimeAndEndTime(startTime, endTime, pageable).stream()
                 .map(item -> changeVoteEventDTOToVoteEvent(item))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void deleteAll() {
+        voteEventRepository.deleteAll();
     }
 }

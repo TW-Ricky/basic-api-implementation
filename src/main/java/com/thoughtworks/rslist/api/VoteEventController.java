@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -31,19 +32,18 @@ public class VoteEventController {
     }
 
     @GetMapping("/voteRecord")
-    public ResponseEntity<List<VoteEvent>> getVoteRecord(@RequestParam Integer userId,
-                                                         @RequestParam Integer rsEventId,
+    public ResponseEntity<List<VoteEvent>> getVoteRecord(@RequestParam(required = false) Integer userId,
+                                                         @RequestParam(required = false) Integer rsEventId,
+                                                         @RequestParam(required = false) String startTime,
+                                                         @RequestParam(required = false) String endTime,
                                                          @RequestParam Integer pageIndex) {
-        List<VoteEvent> voteEvent = voteEventService.getVoteRecord(userId, rsEventId, pageIndex);
-        return ResponseEntity.ok(voteEvent);
-    }
-    @GetMapping("/voteRecordByTime")
-    public ResponseEntity<List<VoteEvent>> getVoteRecordByTime(@RequestParam String startTime,
-                                                               @RequestParam String endTime) throws JsonProcessingException {
-        System.out.println(startTime);
-        System.out.println(endTime);
-
-        List<VoteEvent> voteEvent = voteEventService.getVoteRecordByTime(LocalDateTime.parse(startTime), LocalDateTime.parse(endTime));
+        List<VoteEvent> voteEvent = new ArrayList<>();
+        if (userId != null && rsEventId != null) {
+            voteEvent = voteEventService.getVoteRecord(userId, rsEventId, pageIndex);
+        }
+        if (startTime != null && endTime != null) {
+            voteEvent = voteEventService.getVoteRecordByTime(LocalDateTime.parse(startTime), LocalDateTime.parse(endTime), pageIndex);
+        }
         return ResponseEntity.ok(voteEvent);
     }
 
