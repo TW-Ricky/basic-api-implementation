@@ -5,6 +5,7 @@ import com.thoughtworks.rslist.dto.RsEventDTO;
 import com.thoughtworks.rslist.dto.UserDTO;
 import com.thoughtworks.rslist.dto.VoteEventDTO;
 import com.thoughtworks.rslist.exception.RsEventNotExistsException;
+import com.thoughtworks.rslist.exception.TimeErrorException;
 import com.thoughtworks.rslist.exception.UserNotExistsException;
 import com.thoughtworks.rslist.exception.VoteNumberOverUsersOwnException;
 import com.thoughtworks.rslist.repository.RsEventRepository;
@@ -17,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -85,6 +87,16 @@ public class VoteEventServiceImpl implements VoteEventService {
     public List<VoteEvent> getVoteRecord(Integer userId, Integer rsEventId, Integer pageIndex) {
         Pageable pageable = PageRequest.of(pageIndex - 1, 5);
         return voteEventRepository.findAccordingByUserIdAndRsEventId(userId, rsEventId, pageable).stream()
+                .map(item -> changeVoteEventDTOToVoteEvent(item))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<VoteEvent> getVoteRecordByTime(LocalDateTime startTime, LocalDateTime endTime) {
+        if (startTime.isAfter(endTime)) {
+            throw new TimeErrorException("startTime after than endTime");
+        }
+        return voteEventRepository.findAccordingBetweenStartTimeAndEndTime(startTime, endTime).stream()
                 .map(item -> changeVoteEventDTOToVoteEvent(item))
                 .collect(Collectors.toList());
     }

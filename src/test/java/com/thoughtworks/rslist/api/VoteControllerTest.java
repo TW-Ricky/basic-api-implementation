@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.ResultMatcher;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.BlockingDeque;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -79,7 +80,7 @@ class VoteControllerTest {
         RsEvent newRsEvent = rsEventService.getRsEventById(rsEventId);
         User newUser = userService.getUserById(userId);
         List<VoteEvent> voteEventList = voteEventService.getVoteEventList();
-        assertEquals(8, newUser.getVoteNumber());
+        assertEquals(98, newUser.getVoteNumber());
         assertEquals(2, newRsEvent.getVoteNum());
         assertEquals(1, voteEventList.size());
     }
@@ -131,6 +132,33 @@ class VoteControllerTest {
                 .andExpect(jsonPath("$[1].voteNum", is(7)))
                 .andExpect(jsonPath("$[2].voteNum", is(8)));
 
+    }
+
+    @Test
+    public void should_return_vote_event_when_vote_time_between_start_and_end() throws Exception {
+        for (int i = 1; i <= 8; ++i) {
+            VoteEvent voteEvent = VoteEvent.builder()
+                    .voteNum(i)
+                    .voteTime(LocalDateTime.of(2020, 5,20 + i, 12,0, 0))
+                    .userId(userId)
+                    .build();
+            voteEventService.voteRsEvent(rsEventId, voteEvent);
+        }
+        LocalDateTime start = LocalDateTime.of(2020, 5,21, 12,0, 0);
+        LocalDateTime end = LocalDateTime.of(2020, 5,25, 12,0, 0);
+        String startTime = objectMapper.writeValueAsString(start).replaceAll("\"", "");
+        String endTime = objectMapper.writeValueAsString(end).replaceAll("\"", "");
+        mockMvc.perform(get("/voteRecordByTime")
+                .param("startTime", startTime)
+                .param("endTime", endTime))
+                .andExpect(jsonPath("$", hasSize(5)))
+                .andExpect(jsonPath("$[0].userId", is(userId)))
+                .andExpect(jsonPath("$[0].rsEventId", is(rsEventId)))
+                .andExpect(jsonPath("$[0].voteNum", is(1)))
+                .andExpect(jsonPath("$[1].voteNum", is(2)))
+                .andExpect(jsonPath("$[2].voteNum", is(3)))
+                .andExpect(jsonPath("$[3].voteNum", is(4)))
+                .andExpect(jsonPath("$[4].voteNum", is(5)));
     }
 
 
