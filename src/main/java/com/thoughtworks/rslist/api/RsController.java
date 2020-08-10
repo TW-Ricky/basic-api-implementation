@@ -1,8 +1,9 @@
 package com.thoughtworks.rslist.api;
 
 
-import com.thoughtworks.rslist.domain.User;
-import com.thoughtworks.rslist.exception.RsEventNotValidException;
+import com.thoughtworks.rslist.service.RsEventService;
+import com.thoughtworks.rslist.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -11,72 +12,42 @@ import org.springframework.web.bind.annotation.*;
 
 
 import javax.validation.Valid;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 public class RsController {
-  private List<RsEvent> rsList = initRsList();
 
-  private List<RsEvent> initRsList() {
-    User user = new User("ricky", "male", 19, "a@b.com", "18888888888");
-    List<RsEvent> rsEvents = new ArrayList<>();
-    rsEvents.add(new RsEvent("热搜来了", "热搜", user));
-    rsEvents.add(new RsEvent("天气好热，没有空调", "难受", user));
-    return rsEvents;
-  }
+  @Autowired
+  UserService userService;
 
-  @GetMapping("/rs/{index}")
-  public ResponseEntity getRsEventList(@PathVariable int index) {
-    if (index <= 0 || index > rsList.size()) {
-      throw new RsEventNotValidException("invalid index");
-    }
-      return ResponseEntity.ok(rsList.get(index - 1));
+  @Autowired
+  RsEventService rsEventService;
+
+  @GetMapping("/rs/{rsEventId}")
+  public ResponseEntity getRsEventList(@PathVariable Integer rsEventId) {
+    return ResponseEntity.ok(rsEventService.getRsEventById(rsEventId));
   }
 
   @GetMapping("/rs/list")
-  private ResponseEntity getRsListBetween(@RequestParam(required = false) Integer start
-          ,@RequestParam(required = false) Integer end) {
-    if (start == null) {
-      start = 1;
-    }
-    if (end == null) {
-      end = rsList.size();
-    }
-    if (start <= 0 || end > rsList.size() || start > end) {
-      throw new RsEventNotValidException("invalid request param");
-    }
-    return ResponseEntity.ok(rsList.subList(start - 1, end));
+  private ResponseEntity getRsListBetween(@RequestParam(required = false) Integer start,
+                                          @RequestParam(required = false) Integer end) {
+    return ResponseEntity.ok(rsEventService.subRsEventList(start, end));
   }
 
   @PostMapping("/rs/event")
   private ResponseEntity addRsEvent(@RequestBody @Valid RsEvent rsEvent) {
-    UserController userController = new UserController();
-    if (!userController.checkUser(rsEvent.getUser().getUserName())) {
-      userController.addUser(rsEvent.getUser());
-    }
-    rsList.add(rsEvent);
-    return ResponseEntity.created(null).header("index", String.valueOf(rsList.size())).build();
+    String rsEventId = String.valueOf(rsEventService.addRsEvent(rsEvent));
+    return ResponseEntity.created(null).header("rsEventId", rsEventId).build();
   }
 
-  @PatchMapping("/rs/{index}")
-  private ResponseEntity updateRsEvent(@PathVariable Integer index, @RequestBody RsEvent rsEvent) {
-    RsEvent newRsEvent = rsList.get(index - 1);
-    if (rsEvent.getEventName() != null) {
-      newRsEvent.setEventName(rsEvent.getEventName());
-    }
-    if (rsEvent.getKeyWord() != null) {
-      newRsEvent.setKeyWord(rsEvent.getKeyWord());
-    }
-    rsList.set(index - 1, newRsEvent);
+  @PatchMapping("/rs/{rsEventId}")
+  private ResponseEntity updateRsEvent(@PathVariable Integer rsEventId, @RequestBody RsEvent newRsEvent) {
+    rsEventService.updateRsEventById(rsEventId, newRsEvent);
     return ResponseEntity.ok().build();
   }
 
-  @DeleteMapping("/rs/{index}")
-  private ResponseEntity deleteRsEvent(@PathVariable Integer index) {
-    rsList.remove(index - 1);
+  @DeleteMapping("/rs/{rsEventId}")
+  private ResponseEntity deleteRsEvent(@PathVariable Integer rsEventId) {
+    rsEventService.deleteRsEventById(rsEventId);
     return ResponseEntity.ok().build();
   }
 }

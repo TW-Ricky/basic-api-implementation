@@ -1,9 +1,13 @@
 package com.thoughtworks.rslist.api;
 
 import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.thoughtworks.rslist.domain.RsEvent;
 import com.thoughtworks.rslist.domain.User;
+import com.thoughtworks.rslist.service.RsEventService;
+import com.thoughtworks.rslist.service.UserService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -22,6 +26,29 @@ public class ErrorHandlingTest {
 
     @Autowired
     MockMvc mockMvc;
+    @Autowired
+    private RsEventService rsEventService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @BeforeEach
+    private void init() {
+        userService.deleteAll();
+        rsEventService.deleteAll();
+        User user = User.builder()
+                .userName("xiaobai")
+                .age(19)
+                .email("a@b.com")
+                .gender("male")
+                .phone("18888888888")
+                .build();
+        Integer userId = userService.addUser(user);
+        rsEventService.addRsEvent(RsEvent.builder().eventName("热搜来了").keyword("热搜").userId(userId).build());
+        rsEventService.addRsEvent(RsEvent.builder().eventName("天气好热，没有空调").keyword("难受").userId(userId).build());
+        objectMapper.configure(MapperFeature.USE_ANNOTATIONS, false);
+    }
 
     @Test
     public void should_throw_exception_when_get_list_invalid_request_param() throws Exception {
@@ -39,13 +66,15 @@ public class ErrorHandlingTest {
 
     @Test
     public void should_throw_exception_when_post_rs_event_invalid_param() throws Exception {
-        User user = new User("ricky", "male", 19, "a@b.com", "18888888888");
-        RsEvent rsEvent = new RsEvent();
-        rsEvent.setKeyWord("测试");
-        rsEvent.setUser(user);
-        JsonMapper jsonMapper = new JsonMapper();
-        jsonMapper.configure(MapperFeature.USE_ANNOTATIONS, false);
-        String jsonString = jsonMapper.writeValueAsString(rsEvent);
+        User user = User.builder()
+                .userName("xiaobai")
+                .age(19)
+                .email("a@b.com")
+                .gender("male")
+                .phone("18888888888")
+                .build();
+        RsEvent rsEvent = RsEvent.builder().keyword("测试").userId(1).build();
+        String jsonString = objectMapper.writeValueAsString(rsEvent);
         mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
                 .andExpect(jsonPath("error", is("invalid param")))
                 .andExpect(status().isBadRequest());
@@ -53,9 +82,14 @@ public class ErrorHandlingTest {
 
     @Test
     public void should_throw_exception_when_post_user_invalid_user() throws Exception {
-        User user = new User("ricky", "male", 15, "a@b.com", "18888888888");
-        JsonMapper jsonMapper = new JsonMapper();
-        String jsonString = jsonMapper.writeValueAsString(user);
+        User user = User.builder()
+                .userName("xiaobai")
+                .age(15)
+                .email("a@b.com")
+                .gender("male")
+                .phone("18888888888")
+                .build();
+        String jsonString = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8"))
                 .andExpect(jsonPath("error", is("invalid user")))
                 .andExpect(status().isBadRequest());

@@ -1,46 +1,39 @@
 package com.thoughtworks.rslist.api;
 
-import com.thoughtworks.rslist.domain.Error;
 import com.thoughtworks.rslist.domain.User;
+import com.thoughtworks.rslist.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 public class UserController {
-    List<User> userList = initUserList();
+    @Autowired
+    UserService userService;
 
-    private List<User> initUserList() {
-        List<User> users = new ArrayList<>();
-        users.add(new User("ricky", "male", 19, "a@b.com", "18888888888"));
-        return users;
-    }
-
-    public boolean checkUser(String userName) {
-        long count = userList.stream().filter(it -> it.getUserName().equals(userName)).count();
-        return count > 0;
-    }
-    public void addUser(User user) {
-        userList.add(user);
-    }
     @PostMapping("/user")
-    public ResponseEntity registerUser(@RequestBody @Valid User user) {
-        userList.add(user);
-        return ResponseEntity.created(null).build();
+    public ResponseEntity<Integer> registerUser(@RequestBody @Valid User user) throws Exception {
+        Integer id = userService.addUser(user);
+        return ResponseEntity.created(null).body(id);
     }
 
     @GetMapping("/users")
-    public ResponseEntity getUserList() {
-        return ResponseEntity.ok(userList);
+    public ResponseEntity<List> getUserList() {
+        return ResponseEntity.ok(userService.getUserList());
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity userNotValidExceptionHandler(MethodArgumentNotValidException e) {
-        Error error = new Error("invalid user");
-        return ResponseEntity.badRequest().body(error);
+    @GetMapping("/user/{id}")
+    public ResponseEntity<User> getUserById(@PathVariable int id) {
+        return ResponseEntity.ok(userService.getUserById(id));
     }
+
+    @DeleteMapping("/user/{id}")
+    public ResponseEntity deleteUserById(@PathVariable int id) {
+        userService.deleteUserById(id);
+        return ResponseEntity.ok().build();
+    }
+
 }
