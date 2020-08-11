@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 public class RsController {
@@ -23,13 +24,13 @@ public class RsController {
   RsEventService rsEventService;
 
   @GetMapping("/rs/{rsEventId}")
-  public ResponseEntity getRsEventList(@PathVariable Integer rsEventId) {
+  public ResponseEntity<RsEvent> getRsEventById(@PathVariable Integer rsEventId) {
     return ResponseEntity.ok(rsEventService.getRsEventById(rsEventId));
   }
 
   @GetMapping("/rs/list")
-  private ResponseEntity getRsListBetween(@RequestParam(required = false) Integer start,
-                                          @RequestParam(required = false) Integer end) {
+  private ResponseEntity<List<RsEvent>> getRsListBetween(@RequestParam(required = false) Integer start,
+                                                @RequestParam(required = false) Integer end) {
     return ResponseEntity.ok(rsEventService.subRsEventList(start, end));
   }
 
